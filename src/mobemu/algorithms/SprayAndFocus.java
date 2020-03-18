@@ -164,6 +164,8 @@ public class SprayAndFocus extends Node {
 
             // if the node that doesn't have the message is the better one (has met
             // the destination more recently plus delta), transfer the message
+            // THESE ARE TIMESTAMPS!!! The paper suggests using timers increment by 1 per
+            // clock tick
             if (timeDestinationSeen > timeDestinationSeenEncountered + delta) {
                 //encounteredNode.removeMessage(message, fromDataMemory);
                 toRemove.add(message);

@@ -26,6 +26,7 @@ public class KClique implements CommunityDetection {
 
     private final List<Integer> localCommunity; // the local community of the current node
     private final boolean[] familiarSet; // the familiar set of the current node
+    // a local approximation of the Familiar Set of all vertices in its local compunity
     private final boolean[][] globalFamiliarSet; // the global familiar set of the current node
     private int contactThreshold; // contact threshold for the K-clique algorithm
     private int communityThreshold; // community threshold for the K-clique algorithm
@@ -126,13 +127,18 @@ public class KClique implements CommunityDetection {
         KClique nodeCommunity = (KClique) node.getCommunityInfo();
 
         if (global) {
+        	// update the approximation of the familiar set for all nodes
             for (int i = 0; i < globalFamiliarSet.length; i++) {
                 for (int j = 0; j < globalFamiliarSet[i].length; j++) {
+                	// for every node in the experiment check if the encountered
+                	// node has new info about a node familiar set
                     globalFamiliarSet[i][j] |= nodeCommunity.globalFamiliarSet[i][j];
                 }
             }
         } else {
             for (int j = 0; j < globalFamiliarSet[node.getId()].length; j++) {
+            	// update the approximation the node has about the familiar set of
+            	// the encountered node
                 globalFamiliarSet[node.getId()][j] |= nodeCommunity.familiarSet[j];
             }
         }
@@ -175,6 +181,9 @@ public class KClique implements CommunityDetection {
 
         int count = 0;
 
+        // if the encountered node contains k - 1 nodes in its familiar set
+        // than also belong to the local community of the current node,
+        // then it is also added to the local community of the current node
         for (Integer localNode : localCommunity) {
             if (nodeCommunity.familiarSet[localNode]) {
                 count++;
@@ -198,9 +207,15 @@ public class KClique implements CommunityDetection {
 
         KClique nodeCommunity = (KClique) encounteredNode.getCommunityInfo();
 
+        // consider each vertex in the local community of the encountered node
+        // to be added to the local community of the current node if the encountered node
+        // has been previously added to the local community of the current node
         for (Integer newID : nodeCommunity.localCommunity) {
             int count = 0;
 
+            // if a candidate node contains k - 1 nodes in its familiar set
+            // than also belong to the local community of the current node,
+            // then it is also added to the local community of the current node
             for (int i = 0; i < globalFamiliarSet[newID].length; i++) {
                 if (globalFamiliarSet[newID][i] && inLocalCommunity(i)) {
                     count++;
