@@ -40,9 +40,9 @@ func createContacts(myMap map[string][]EventRecord, writer *csv.Writer) {
 	var contacts int64
 
 	for key, mySlice := range myMap {
-		// fmt.Println("mySlice size " + strconv.Itoa(len(mySlice)) + " location " + key)
+		fmt.Println("mySlice size " + strconv.Itoa(len(mySlice)) + " location " + key)
+		contacts = 0
 		for i := 0; i < len(mySlice)-1; i++ {
-			contacts = 0
 			nodeId := mySlice[i].nodeId
 			for j := i + 1; j < len(mySlice); j++ {
 				// this condition is necessary because a node might return
@@ -50,10 +50,18 @@ func createContacts(myMap map[string][]EventRecord, writer *csv.Writer) {
 				if nodeId == mySlice[j].nodeId {
 					continue
 				}
+
 				// if node A arrives at the location X
 				// and node B was already there, create a
 				// contact opportunity
 				if mySlice[i].start > mySlice[j].start {
+					// t1 := time.Unix(mySlice[i].start, 0)
+					// t2 := time.Unix(mySlice[i].end, 0)
+					// fmt.Println(mySlice[i].nodeId, t1, t2, key)
+					// t1 = time.Unix(mySlice[j].start, 0)
+					// t2 = time.Unix(mySlice[j].end, 0)
+					// fmt.Println(mySlice[j].nodeId, t1, t2, key)
+					// fmt.Println()
 					err := writer.Write([]string{
 						strconv.Itoa(nodeId),
 						strconv.Itoa(mySlice[j].nodeId),
@@ -67,7 +75,7 @@ func createContacts(myMap map[string][]EventRecord, writer *csv.Writer) {
 				}
 			}
 		}
-		// fmt.Println("contacts at this location " + strconv.FormatInt(contacts, 10))
+		fmt.Println("contacts at location " + key + " " + strconv.FormatInt(contacts, 10))
 	}
 }
 
@@ -176,16 +184,13 @@ func main() {
 				case day1:
 					// fmt.Printf("ADD node %d loc %s day %d startT %d endT %d\n", lastID, location, day, startTime, prevTime)
 					day1Map[location] = append(day1Map[location], event)
-					day1Map[location] = append(day1Map[location], event)
 					break
 				case day2:
 					// fmt.Printf("ADD node %d loc %s day %d startT %d endT %d\n", lastID, location, day, startTime, prevTime)
-					day1Map[location] = append(day1Map[location], event)
 					day2Map[location] = append(day2Map[location], event)
 					break
 				case day3:
 					// fmt.Printf("ADD node %d loc %s day %d startT %d endT %d\n", lastID, location, day, startTime, prevTime)
-					day1Map[location] = append(day1Map[location], event)
 					day3Map[location] = append(day3Map[location], event)
 					break
 				default:
@@ -207,13 +212,6 @@ func main() {
 		panic(err)
 	}
 	writer := csv.NewWriter(file)
-
-	// for key, mySlice := range day1Map {
-	// 	fmt.Println("mySlice size " + strconv.Itoa(len(mySlice)) + " location " + key)
-	// 	for i := 0; i < len(mySlice); i++ {
-	// 		fmt.Printf("%d %d %d %s\n", mySlice[i].nodeId, mySlice[i].start, mySlice[i].end, key)
-	// 	}
-	// }
 
 	// establish contacts between nodes
 	createContacts(day1Map, writer)

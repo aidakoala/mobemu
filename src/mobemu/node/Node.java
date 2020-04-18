@@ -186,12 +186,14 @@ public abstract class Node {
             int count = 0;
 
             // update battery level
+            // TODO update battery depending on the activity of the node
             if (batteryComputation) {
                 for (Node node : nodes) {
                     node.updateBatteryLevel();
                 }
             }
 
+            // TODO
             for (Node node : nodes) {
                 node.onTick(tick, sampleTime);
             }

@@ -11,6 +11,8 @@ import mobemu.node.Message;
 import mobemu.node.Node;
 import mobemu.node.Stats;
 import mobemu.parsers.HCMM;
+import mobemu.parsers.SonarFestival;
+import mobemu.parsers.UPB;
 import mobemu.trace.Parser;
 
 /**
@@ -40,11 +42,13 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-		Parser parser = new HCMM(100, 5 * 3600, 300, 0.25f, 1f, 0.1f, 200f, 200f, 20, 20, 10.0, 0.7, communities,
-				travelers, 1f, 0.8f, 0, showRun, 10, false);
+		
+		// Parser parser = new HCMM(100, 5 * 3600, 300, 0.25f, 1f, 0.1f, 200f, 200f, 20, 20, 10.0, 0.7, communities,
+		// 		travelers, 1f, 0.8f, 0, showRun, 10, false);
 		// Parser parser = new UPB(UPB.UpbTrace.UPB2012, false);
 		// Parser parser = new Sigcomm();
 		// Parser parser = new UPB(UPB.UpbTrace.UPB2012);
+		Parser parser = new SonarFestival();
 		long estimatedTime = System.nanoTime() - startTime;
 		startTime = System.nanoTime();
 		System.out.println("Trace generation duration: " + estimatedTime * 1e-9);
@@ -73,9 +77,13 @@ public class MobEmu {
 					altruism);
 		}
 
+		System.out.println("Generated nodes");
+			
 		// run the trace
 		List<Message> messages = Node.runTrace(nodes, parser.getTraceData(), true, dissemination, seed);
 		estimatedTime = System.nanoTime() - startTime;
+		
+		System.out.println("Run simulation");
 
 		System.out.println("Trace run duration: " + estimatedTime * 1e-9);
 		System.out.println("Messages: " + messages.size());
