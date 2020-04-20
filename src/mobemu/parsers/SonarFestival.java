@@ -1,14 +1,15 @@
 package mobemu.parsers;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import com.univocity.parsers.csv.*;
+import com.univocity.parsers.common.processor.BeanListProcessor;
 
 import mobemu.node.Context;
 import mobemu.trace.*;
@@ -19,12 +20,12 @@ public class SonarFestival implements Parser {
 	private Map<Integer, Context> context;
 	private boolean[][] socialNetwork;
 	private Calendar calendar;
-	private int devices = 13645;
-	
+	private int devices = 13644;
+		
 	public SonarFestival() {
 		this.trace = new Trace("Sonarfestival");
 		this.context = new HashMap<>();
-		this.socialNetwork = null;
+		this.socialNetwork = new boolean[devices][devices];
 		this.calendar = Calendar.getInstance();
 		calendar.set(2015, 06, 18, 12, 0, 0); // start of the trace 06/18/2015 12:00
 		
@@ -59,56 +60,26 @@ public class SonarFestival implements Parser {
 	}
 	
 	private void parseSonarFestival(String contacts) {
-		// determine the end and the start of the trace
-		long end = Long.MIN_VALUE;
-		long start = Long.MAX_VALUE;
+		BeanListProcessor<Contact> rowProcessor = new BeanListProcessor<Contact>(Contact.class);
 		
 		// parse contacts file
-		try {
-			String line;
-			FileInputStream fstream = new FileInputStream(contacts);
-			try (DataInputStream in = new DataInputStream(fstream)) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-				int i = 0;
-				while ((line = br.readLine()) != null) {
-					i++;
-
-					String[] tokens;
-					String delimiter = ",";
-
-					tokens = line.split(delimiter);
-
-					int observerID = Integer.parseInt(tokens[0]);
-					int observedID = Integer.parseInt(tokens[1]);
-
-					// the time is already in unix time
-					long contactStart = Long.parseLong(tokens[2]) * MILLIS_PER_SECOND;
-					long contactEnd = Long.parseLong(tokens[3]) * MILLIS_PER_SECOND;
-					contactStart -= contactStart % MILLIS_PER_SECOND;
-					contactEnd -= contactEnd % MILLIS_PER_SECOND;
-
-					// compute trace finish time.
-					if (contactEnd > end) {
-						end = contactEnd;
-					}
-
-					// compute trace start time.
-					if (contactStart < start) {
-						start = contactStart;
-					}
-
-					System.out.println(i + " " + observerID + " " + observedID + " " + contactStart + " " + contactEnd);
-					trace.addContact(new Contact(observerID, observedID, contactStart, contactEnd));
-				}
-			}
-		} catch (IOException | NumberFormatException e) {
-			System.err.println("SonarFestival Parser exception: " + e.getMessage());
-		}
+		CsvParserSettings settings = new CsvParserSettings();
+		settings.getFormat().setLineSeparator("\n");
+		settings.setInputBufferSize(16 * 1024);
+		settings.setProcessor(rowProcessor);
 		
-		trace.setStartTime(start);
-		trace.setEndTime(end);
-		trace.setSampleTime(MILLIS_PER_SECOND);
+		CsvParser parser = new CsvParser(settings);
+		FileInputStream fstream;
+		try {
+			fstream = new FileInputStream(contacts);
+			long startTime = System.nanoTime();
+			parser.parse(new InputStreamReader(fstream));
+			trace.setContacts(rowProcessor.getBeans());
+			trace.setSampleTime(MILLIS_PER_SECOND);
+			long elapsedTime = System.nanoTime() - startTime;
+			System.out.println("read all records " + elapsedTime / 1000000000 + "s " + trace.contacts.size());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
-
 }

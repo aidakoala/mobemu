@@ -4,6 +4,8 @@
  */
 package mobemu.trace;
 
+import com.univocity.parsers.annotations.*;
+
 /**
  * Class for a contact between two mobile node in an opportunistic network.
  *
@@ -11,11 +13,19 @@ package mobemu.trace;
  */
 public class Contact implements Comparable<Contact> {
 
+	@Parsed(index = 0)
     private int observer;
+	@Parsed(index = 1)
     private int observed;
+	@Parsed(index = 2)
     private long start;
+	@Parsed(index = 3)
     private long end;
     private boolean type; // true - WiFi, false - Bluetooth
+    
+    public Contact() {
+    	this.type = false;
+    }
 
     /**
      * Constructor for the {@link Contact} class.

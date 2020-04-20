@@ -166,8 +166,10 @@ public abstract class Node {
      * @return list of messages generated during the trace
      */
     public static List<Message> runTrace(Node[] nodes, Trace trace, boolean batteryComputation, boolean dissemination, long seed) {
-        int messageCopies = nodes.length;
-        int messageCount = nodes.length;
+//        int messageCopies = nodes.length;
+//        int messageCount = nodes.length;
+    	int messageCopies = 100;
+    	int messageCount = 100;
 
         int contactCount = trace.getContactsCount();
         long startTime = trace.getStartTime();
@@ -210,6 +212,7 @@ public abstract class Node {
             if (generate && generationTime.get(Calendar.HOUR) == currentDay.get(Calendar.HOUR)) {
                 messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick, dissemination, messageRandom));
                 generate = false;
+                System.out.println("Generated a batch of messages at " + generationTime.get(Calendar.HOUR));
             }
 
             for (int i = 0; i < contactCount; i++) {

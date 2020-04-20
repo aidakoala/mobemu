@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class Trace {
 
-    private List<Contact> contacts; // all contacts
+	// TODO back to private
+    public List<Contact> contacts; // all contacts
     private String name; // the designated name of the trace
     private long start; // the starting time of the trace
     private long end; // the finish time of the trace
@@ -58,6 +59,14 @@ public class Trace {
         }
 
         return contacts.add(contact);
+    }
+    
+    public void setContacts(List<Contact> contacts) {
+    	this.contacts = contacts;
+    }
+    
+    public List<Contact> getContacts() {
+    	return contacts;
     }
 
     /**

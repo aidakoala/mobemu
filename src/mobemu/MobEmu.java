@@ -15,6 +15,11 @@ import mobemu.parsers.SonarFestival;
 import mobemu.parsers.UPB;
 import mobemu.trace.Parser;
 
+class TraceTime {
+	public long start = Long.MAX_VALUE;
+	public long end = Long.MIN_VALUE;
+}
+
 /**
  * Main class for MobEmu.
  *
@@ -49,6 +54,43 @@ public class MobEmu {
 		// Parser parser = new Sigcomm();
 		// Parser parser = new UPB(UPB.UpbTrace.UPB2012);
 		Parser parser = new SonarFestival();
+		
+		// determine start and end time of Sonar Festival trace using threads
+		// vector of results for threads because using a mutes to update end and start time
+		// would force threads to sleep too often => to many context switches
+		int noThreads = 8;
+		TraceTime traceTime[] = new TraceTime[noThreads];
+		Thread threads[] = new Thread[noThreads];
+		for (int i = 0; i < noThreads; i++) {
+			traceTime[i] = new TraceTime();
+			SonarFestivalTask myTask = new SonarFestivalTask((SonarFestival)parser, traceTime[i], i, noThreads);
+			threads[i] = new Thread(myTask);
+			threads[i].start();
+		}
+		for (int i = 0; i < noThreads; i++) {
+			try {
+				threads[i].join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		// actually compute start and end time
+		long start = Long.MAX_VALUE;
+		long end = Long.MIN_VALUE;
+		for (int i = 0; i < noThreads; i++) {
+			System.out.println(traceTime[i].start + " " + traceTime[i].end);
+			if (start > traceTime[i].start) {
+				start = traceTime[i].start;
+			}
+			if (end < traceTime[i].end) {
+				end = traceTime[i].end;
+			}
+		}
+		parser.getTraceData().setStartTime(start);
+		parser.getTraceData().setEndTime(end);
+		System.out.println("start = " + start / Parser.MILLIS_PER_SECOND);
+		System.out.println("end = " + end / Parser.MILLIS_PER_SECOND);
+		
 		long estimatedTime = System.nanoTime() - startTime;
 		startTime = System.nanoTime();
 		System.out.println("Trace generation duration: " + estimatedTime * 1e-9);
@@ -72,6 +114,7 @@ public class MobEmu {
 
 		Node[] nodes = new Node[parser.getNodesNumber()];
 		for (int i = 0; i < nodes.length; i++) {
+			System.out.println(i);
 			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
 					altruism);
