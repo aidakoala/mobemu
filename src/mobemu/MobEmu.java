@@ -56,7 +56,7 @@ public class MobEmu {
 		Parser parser = new SonarFestival();
 		
 		// determine start and end time of Sonar Festival trace using threads
-		// vector of results for threads because using a mutes to update end and start time
+		// vector of results for threads because using a mutex to update end and start time
 		// would force threads to sleep too often => to many context switches
 		int noThreads = 8;
 		TraceTime traceTime[] = new TraceTime[noThreads];
