@@ -56,7 +56,8 @@ public class KClique implements CommunityDetection {
         this.familiarSet = new boolean[nodes];
         this.localCommunity = new ArrayList<>(nodes);
         this.localCommunity.add(id);
-        this.globalFamiliarSet = new boolean[nodes][nodes];
+        // this.globalFamiliarSet = new boolean[nodes][nodes];
+        this.globalFamiliarSet = null;
         this.contactThreshold = contactThreshold;
         this.communityThreshold = communityThreshold;
     }
@@ -82,12 +83,12 @@ public class KClique implements CommunityDetection {
     @Override
     public void onContact(Node encounteredNode, long tick, long sampleTime) {
         // update the global familiar set of the current node
-        updateFamiliarSet(encounteredNode, true);
+        // updateFamiliarSet(encounteredNode, true);
 
         // step 4 of the K-clique algorithm
-        if (!inFamiliarSet(encounteredNode.getId())) {
-            updateFamiliarSet(encounteredNode, false);
-        }
+//        if (!inFamiliarSet(encounteredNode.getId())) {
+//            updateFamiliarSet(encounteredNode, false);
+//        }
 
         // step 5 of the K-clique algorithm
         if (!inLocalCommunity(encounteredNode.getId())) {
@@ -95,9 +96,9 @@ public class KClique implements CommunityDetection {
         }
 
         // step 6 of the K-clique algorithm
-        if (inLocalCommunity(encounteredNode.getId())) {
-            updateLocalCommunityAggressive(encounteredNode);
-        }
+//        if (inLocalCommunity(encounteredNode.getId())) {
+//            updateLocalCommunityAggressive(encounteredNode);
+//        }
     }
 
     /**
