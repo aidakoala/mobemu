@@ -130,6 +130,7 @@ public abstract class Node {
         }
 
         this.encounteredNodes = new HashMap<>();
+        // TODO init this memmory hungry structure only for algorithms who use it
         this.encountersPerHour = new int[HOURS_IN_DAY][(int) ((double) (traceEndReset - traceStartReset) / MILLIS_IN_DAY) + 1][nodes];
         this.timesPerHour = new long[HOURS_IN_DAY][(int) ((double) (traceEndReset - traceStartReset) / MILLIS_IN_DAY) + 1][nodes];
         this.exchangeStats = new HashMap<>();
