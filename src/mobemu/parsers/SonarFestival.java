@@ -20,7 +20,7 @@ public class SonarFestival implements Parser {
 	private Map<Integer, Context> context;
 	private boolean[][] socialNetwork;
 	private Calendar calendar;
-	private int devices = 19222;
+	private int devices = 2000;
 		
 	public SonarFestival() {
 		this.trace = new Trace("Sonarfestival");
