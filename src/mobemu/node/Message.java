@@ -404,7 +404,7 @@ public class Message implements Comparable<Message> {
      */
     private static int zipfDistribution(double value) {
         int zipfExponent = 1;
-        int zipfSize = 4;
+        int zipfSize = 4; // ordinea frecventei conform zifp's law frequency = 1/rank 0,1,2,3
         double sum = 0;
 
         for (int i = 1; i <= zipfSize; i++) {
