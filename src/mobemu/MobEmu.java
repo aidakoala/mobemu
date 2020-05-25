@@ -10,6 +10,7 @@ import mobemu.algorithms.Epidemic;
 import mobemu.node.Message;
 import mobemu.node.Node;
 import mobemu.node.Stats;
+import mobemu.parsers.FestivalMobility;
 import mobemu.parsers.HCMM;
 import mobemu.parsers.SonarFestival;
 import mobemu.parsers.UPB;
@@ -28,10 +29,12 @@ class TraceTime {
 public class MobEmu {
 
 	public static void main(String[] args) {
-
-		int communities = 100 / 5;
-		int travelers = 10;
+		float gridHeight = 40f;
+		float gridWidth = 20f;
+		int rows = 10;
+		int cols = 4;
 		boolean showRun = true;
+		int groupSize = 5;
 		long startTime = System.nanoTime();
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
@@ -47,9 +50,10 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-		
-		 Parser parser = new HCMM(100, 2 * 3600, 300, 0.25f, 1f, 0.1f, 200f, 200f, 20, 20, 10.0, 0.7, communities,
-		 		travelers, 1f, 0.8f, 0, showRun, 10, false);
+		Parser parser = new FestivalMobility(2 * 3600, 0f, 0f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
+				gridWidth, cols, 0.5f, groupSize, 0.7f, 0.8f, showRun, 10, 0);
+//		 Parser parser = new HCMM(2 * 3600, 300, 0f, 0f, 0.1f, gridWidth, gridHeight, 10, 4, 10.0, 0.7,
+//		 		 0.5f, 0.8f, 0, showRun, 10, false);
 		// Parser parser = new UPB(UPB.UpbTrace.UPB2012, false);
 		// Parser parser = new Sigcomm();
 		// Parser parser = new UPB(UPB.UpbTrace.UPB2012);
@@ -134,9 +138,9 @@ public class MobEmu {
 
 		// print opportunistic algorithm statistics
 		System.out.println(nodes[0].getName());
-		System.out.print("" + Stats.computeHitRate(messages, nodes, dissemination) + ",");
-		System.out.print("" + Stats.computeDeliveryCost(messages, nodes, dissemination) + ",");
-		System.out.print("" + Stats.computeDeliveryLatency(messages, nodes, dissemination) + ",");
-		System.out.println("" + Stats.computeHopCount(messages, nodes, dissemination));
+		System.out.println("Hit rate = " + Stats.computeHitRate(messages, nodes, dissemination) + ",");
+		System.out.println("Delivery cost = " + Stats.computeDeliveryCost(messages, nodes, dissemination) + ",");
+		System.out.println("Delivery latency = " + Stats.computeDeliveryLatency(messages, nodes, dissemination) + ",");
+		System.out.println("Hop count = " + Stats.computeHopCount(messages, nodes, dissemination));
 	}
 }

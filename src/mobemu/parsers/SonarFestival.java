@@ -27,7 +27,7 @@ public class SonarFestival implements Parser {
 		this.context = new HashMap<>();
 		this.socialNetwork = new boolean[devices][devices];
 		this.calendar = Calendar.getInstance();
-		calendar.set(2015, 06, 18, 12, 0, 0); // start of the trace 06/18/2015 12:00
+		calendar.set(2015, 06, 18, 9, 0, 0); // start of the trace 06/18/2015 9:00
 		
 		String prefix = "traces" + File.separator + "sonor-festival-data" + File.separator;
 		parseSonarFestival(prefix + "contacts-parsed-sonar-data.csv");

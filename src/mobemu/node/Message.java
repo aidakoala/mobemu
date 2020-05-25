@@ -290,6 +290,9 @@ public class Message implements Comparable<Message> {
         } else {
             hour = 18;
         }
+        
+        System.out.println("hour = " + hour);
+        hour = 3;
 
         time.set(Calendar.HOUR_OF_DAY, hour);
         time.set(Calendar.MINUTE, 0);
