@@ -37,79 +37,79 @@ public class FestivalMobilityComponent extends JComponent {
 			int width = 10;
 			int height = 10;
 
-			int maxPeers = 0;
-			for (int j = 0; j < fm.noHosts; j++) {
-				// if the maximum number of peers has been reached
-				if (maxPeers == hosts[i].maxPeers) {
-					break;
-				}
-				// accept as peer only if the node is not from the same community
-				if (hosts[i].groupId == hosts[j].groupId)
-					continue;
-				
-				double currentDistance = Math.sqrt((hosts[i].currentX - hosts[j].currentX) * (hosts[i].currentX - hosts[j].currentX)
-								+ (hosts[i].currentY - hosts[j].currentY) * (hosts[i].currentY - hosts[j].currentY));
-
-				float radius;
-				// check if the 2 nodes use the same protocol
-				if (hosts[i].protocol != hosts[j].protocol) {
-					continue;
-				} else {
-					switch (hosts[i].protocol) {
-					case 0:
-						radius = FestivalMobility.BLUETOOTH_RADIUS;
-						break;
-					case 1:
-						radius = FestivalMobility.WIFIDIRECT_RADIUS;
-						break;
-					default:
-						// the nodes support both protocols
-						radius = FestivalMobility.WIFIDIRECT_RADIUS;
-					}
-				}
-				
-				// i < j ?????????
-				if (currentDistance < radius) {
-					// System.out.println("current dist = " + currentDistance + " radius = " + radius);
-					int x1 = (int) (hosts[j].currentX * getSize().height / fm.height);
-					int y1 = (int) (hosts[j].currentY * getSize().width / fm.width);
-
-					g2d.setColor(Color.black);
-					// g2d.drawLine(y + width / 2, x + height / 2, y1 + width / 2, x1 + height / 2);
-					maxPeers++;
-				}
-			}
-
-			// do the same for traveler nodes
-			for (int j = 0; j < fm.noOfTravelers; j++) {
-				double currentDistance = Math
-						.sqrt((hosts[i].currentX - travelers[j].currentX) * (hosts[i].currentX - travelers[j].currentX)
-								+ (hosts[i].currentY - travelers[j].currentY) * (hosts[i].currentY - travelers[j].currentY));
-
-				float radius;
-				// check if the 2 nodes use the same protocol
-				if (hosts[i].protocol != travelers[j].protocol) {
-					continue;
-				} else {
-					switch (hosts[i].protocol) {
-					case 0:
-						radius = FestivalMobility.BLUETOOTH_RADIUS;
-					case 1:
-						radius = FestivalMobility.WIFIDIRECT_RADIUS;
-					default:
-						// the nodes support both protocols
-						radius = FestivalMobility.WIFIDIRECT_RADIUS;
-					}
-				}
-				
-				if (currentDistance < radius) {
-					int x1 = (int) (hosts[j].currentX * getSize().height / fm.height);
-					int y1 = (int) (hosts[j].currentY * getSize().width / fm.width);
-
-					g2d.setColor(Color.black);
-					// g2d.drawLine(y + width / 2, x + height / 2, y1 + width / 2, x1 + height / 2);
-				}
-			}
+//			int maxPeers = 0;
+//			for (int j = 0; j < fm.noHosts; j++) {
+//				// if the maximum number of peers has been reached
+//				if (maxPeers == hosts[i].maxPeers) {
+//					break;
+//				}
+//				// accept as peer only if the node is not from the same community
+//				if (hosts[i].groupId == hosts[j].groupId)
+//					continue;
+//				
+//				double currentDistance = Math.sqrt((hosts[i].currentX - hosts[j].currentX) * (hosts[i].currentX - hosts[j].currentX)
+//								+ (hosts[i].currentY - hosts[j].currentY) * (hosts[i].currentY - hosts[j].currentY));
+//
+//				float radius;
+//				// check if the 2 nodes use the same protocol
+//				if (hosts[i].protocol != hosts[j].protocol) {
+//					continue;
+//				} else {
+//					switch (hosts[i].protocol) {
+//					case 0:
+//						radius = FestivalMobility.BLUETOOTH_RADIUS;
+//						break;
+//					case 1:
+//						radius = FestivalMobility.WIFIDIRECT_RADIUS;
+//						break;
+//					default:
+//						// the nodes support both protocols
+//						radius = FestivalMobility.WIFIDIRECT_RADIUS;
+//					}
+//				}
+//				
+//				// i < j ?????????
+//				if (currentDistance < radius) {
+//					// System.out.println("current dist = " + currentDistance + " radius = " + radius);
+//					int x1 = (int) (hosts[j].currentX * getSize().height / fm.height);
+//					int y1 = (int) (hosts[j].currentY * getSize().width / fm.width);
+//
+//					g2d.setColor(Color.black);
+//					// g2d.drawLine(y + width / 2, x + height / 2, y1 + width / 2, x1 + height / 2);
+//					maxPeers++;
+//				}
+//			}
+//
+//			// do the same for traveler nodes
+//			for (int j = 0; j < fm.noOfTravelers; j++) {
+//				double currentDistance = Math
+//						.sqrt((hosts[i].currentX - travelers[j].currentX) * (hosts[i].currentX - travelers[j].currentX)
+//								+ (hosts[i].currentY - travelers[j].currentY) * (hosts[i].currentY - travelers[j].currentY));
+//
+//				float radius;
+//				// check if the 2 nodes use the same protocol
+//				if (hosts[i].protocol != travelers[j].protocol) {
+//					continue;
+//				} else {
+//					switch (hosts[i].protocol) {
+//					case 0:
+//						radius = FestivalMobility.BLUETOOTH_RADIUS;
+//					case 1:
+//						radius = FestivalMobility.WIFIDIRECT_RADIUS;
+//					default:
+//						// the nodes support both protocols
+//						radius = FestivalMobility.WIFIDIRECT_RADIUS;
+//					}
+//				}
+//				
+//				if (currentDistance < radius) {
+//					int x1 = (int) (hosts[j].currentX * getSize().height / fm.height);
+//					int y1 = (int) (hosts[j].currentY * getSize().width / fm.width);
+//
+//					g2d.setColor(Color.black);
+//					// g2d.drawLine(y + width / 2, x + height / 2, y1 + width / 2, x1 + height / 2);
+//				}
+//			}
 
 			for (int j = 0; j < fm.noOfGroups; j++) {
 				for (int k = 0; k < fm.groupSize; k++)
@@ -120,7 +120,6 @@ public class FestivalMobilityComponent extends JComponent {
 					}
 			}
 
-			// g2d.drawOval(x, y, width, height);
 			Ellipse2D.Double circle = new Ellipse2D.Double(y, x, width, height);
 			g2d.fill(circle);
 		}
@@ -132,8 +131,9 @@ public class FestivalMobilityComponent extends JComponent {
 			int width = 10;
 			int height = 10;
 			
-			Ellipse2D.Double circle = new Ellipse2D.Double(y, x, width, height);
-			g2d.fill(circle);
+			// g2d.setColor(colors[i % colors.length]);
+//			Ellipse2D.Double circle = new Ellipse2D.Double(y, x, width, height);
+//			g2d.fill(circle);
 		}
 
 		// draw the horizontal lines of the grid.

@@ -3,6 +3,7 @@ package mobemu.utils;
 import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -16,10 +17,31 @@ public abstract class FestivalMobility {
 	public static final int BLUETOOTH = 0;
 	public static final int WIFIDIRECT = 1;
 	public static final int BOTH = 2;
+
 	public static final float BLUETOOTH_RADIUS = 5.0f;
 	public static final float WIFIDIRECT_RADIUS = 30.0f;
+
 	public static final int MAX_PEERS_BT = 7;
 	public static final int MAX_PEERS_WD = 200;
+	
+	// types of movement
+	// assuming the shows start on the hour, the communities will be able
+	// to move between grids/stages when this feature will be implemented
+	public static final int MOVE_GROUP = 0;
+	public static final int MOVE_NODE = 1;
+	public static final int MOVE_BACK = 2;
+	
+	// types of destination for node/community movement
+	public static final int EDGE_CELL = 0;
+	public static final int FRIENDS_CELL = 1;
+	
+	// time spent by a node/community away
+	public static final int EDGE_MIN = 10 * 60; // 10 min
+	public static final int EDGE_MAX = 20 * 60; // 20 min
+	public static final int FRIENDS_MIN = 10 * 60; // 10 min
+	public static final int FRIENDS_MAX = 30 * 60; // 30 min
+	public static final int NEW_SHOW_MIN = 40 * 60; // 40 min
+	public static final int NEW_SHOW_MAX = 60 * 60; // 1h
 	
 	protected int noHosts;
 	protected int noOfTravelers;
@@ -64,7 +86,10 @@ public abstract class FestivalMobility {
     protected int[] numberOfMembers;
  
     CellsItem[][] cells;
+    int[] edgeCellX;
+    int[] edgeCellY;
     float[][] CA; // cell attractivity
+    boolean eligibleGroup[];
     
     // density of people in a crowd mesured in people / m^2
     protected float maxDensity = 4.0f;
@@ -92,7 +117,8 @@ public abstract class FestivalMobility {
     	for (int i = 0; i < noHosts; i++) {
     		hosts[i] = new Host(BLUETOOTH);
     		// maybe generate a random speed
-    		hosts[i].speed = maxHostSpeed;
+    		Random r = new Random();
+    		hosts[i].speed = minHostSpeed + (maxHostSpeed - minHostSpeed) * r.nextDouble();
     	}
     	numberOfMembers = new int[groupSize];
     	
@@ -104,6 +130,8 @@ public abstract class FestivalMobility {
     	}
     	
     	groups = new int[noOfGroups][groupSize];
+    	eligibleGroup = new boolean[noOfGroups];
+    	Arrays.fill(eligibleGroup, true);
 
 		isConnected = new boolean[noHosts][noHosts];
         // setup of the links
@@ -115,12 +143,37 @@ public abstract class FestivalMobility {
         }
     }
     
+    public void initEgdeCellCoords() {
+    	int noEdgeCells = 2 * rows + cols - 2;
+    	
+    	edgeCellX = new int[noEdgeCells];
+    	edgeCellY = new int[noEdgeCells];
+    	
+    	// left, right, bottom
+    	int i = 0;
+    	for (int l = 0; l < rows; l++) {
+    		edgeCellX[i] = l;
+   			edgeCellY[i] = 0;
+   			i++;
+    	}
+    	for (int r = 0; r < rows; r++) {
+    		edgeCellX[i] = r;
+    		edgeCellY[i] = cols - 1;
+    		i++;
+    	}
+    	for (int b = 1; b < cols - 1; b++) {
+    		edgeCellX[i] = rows - 1;
+    		edgeCellY[i] = b;
+    		i++;
+    	}
+    }
+    
     public void gridSetup() {
     	cells = new CellsItem[rows][cols];
     	
     	for (int i = 0; i < rows; i++) {
     		for (int j = 0; j < cols; j++) {
-    			cells[i][j] = new CellsItem();
+    			cells[i][j] = new CellsItem(i, j);
             }
         }
         for (int i = 0; i < rows; i++) {
@@ -134,7 +187,7 @@ public abstract class FestivalMobility {
     	CA = new float[rows][cols];
     }
     
-    public void computeCoords(int hostId, boolean firstTime, Host[] hostVec, Random rand) {
+    public void computeCoords(int hostId, Host[] hostVec, Random rand) {
     	int cellX, cellY;
     	double r;
 
@@ -151,10 +204,6 @@ public abstract class FestivalMobility {
     		r = Math.pow(Math.pow(hostVec[hostId].goalCurrentX - hostVec[hostId].currentX, 2)
                        + Math.pow(hostVec[hostId].goalCurrentY - hostVec[hostId].currentY, 2), 1 / 2) / Math.sqrt(2);
     	} while (rand.nextDouble() >= r);
-    		
-//       double unif2 = rand.nextDouble();
-//       hostVec[hostId].currentX = unif2 * hostVec[hostId].currentX + (1 - unif2) * hostVec[hostId].goalCurrentX;
-//       hostVec[hostId].currentY = unif2 * hostVec[hostId].currentY + (1 - unif2) * hostVec[hostId].goalCurrentY;
 
        hostVec[hostId].previousGoalX = hostVec[hostId].currentX;
        hostVec[hostId].previousGoalY = hostVec[hostId].currentY;
@@ -162,19 +211,12 @@ public abstract class FestivalMobility {
     
     public void computeCoordsHost(int hostId, double minX, double minY,
     		float heightCell, float widthCell, Random rand) {
-    	double r;
+    	hosts[hostId].currentX = minX + rand.nextDouble() * heightCell;
+    	hosts[hostId].currentY = minY + rand.nextDouble() * widthCell;
 
-    	do {
-    		hosts[hostId].currentX = minX + rand.nextDouble() * heightCell;
-    		hosts[hostId].currentY = minY + rand.nextDouble() * widthCell;
-    		
-    		hosts[hostId].goalCurrentX = minX + rand.nextDouble() * heightCell;
-    		hosts[hostId].goalCurrentY = minY + rand.nextDouble() * widthCell;
-    		
-    		r = Math.pow(Math.pow(hosts[hostId].goalCurrentX - hosts[hostId].currentX, 2)
-                    + Math.pow(hosts[hostId].goalCurrentY - hosts[hostId].currentY, 2), 1 / 2) / Math.sqrt(2);
-    	} while (rand.nextDouble() >= r);
-    	
+    	hosts[hostId].goalCurrentX = hosts[hostId].currentX;
+        hosts[hostId].goalCurrentY = hosts[hostId].currentY;
+    		    	
     	hosts[hostId].previousGoalX = hosts[hostId].currentX;
         hosts[hostId].previousGoalY = hosts[hostId].currentY;
     }
@@ -197,35 +239,32 @@ public abstract class FestivalMobility {
         			// mix the members of 2 groups in a certain area of the cell
         			// otherwise we would have nodes in the same community distributed randomly
         			// in the cell, which does not resemble reality
-//        			if (rand.nextFloat() > 0.5) {
-	        			groupsCell /= 2;
-	            		width = widthCell / groupsCell;            		
-	            		for (int k = 0; k < cells[i][j].groupIds.size(); k++) {
-	            			groupId = cells[i][j].groupIds.get(k);
-	        				if (done == 2) {
-	        					minY = minY + width;
-	        					done = 0;
-	        				}
-	            			for (int l = 0; l < groupSize; l++) {
-	            				computeCoordsHost(groups[groupId][l], minX, minY, heightCell, width, rand);
-	            			}
-	        				done++;
-	            		}
-//        			} else {
-//        				height = heightCell / 2;
-//        				limit = cells[i][j].groupIds.size() / 2;
-//        				for (int k = 0; k < cells[i][j].groupIds.size(); k++) {
-//	            			groupId = cells[i][j].groupIds.get(k);
-//	        				if (done == limit) {
-//	        					minX = minX + height;
-//	        					done = 0;
-//	        				}
-//	            			for (int l = 0; l < groupSize; l++) {
-//	            				computeCoordsHost(groups[groupId][l], minX, minY, height, widthCell, rand);
-//	            			}
-//	        				done++;
+	        		groupsCell /= 2;
+//	            	width = widthCell / groupsCell;            		
+//	            	for (int k = 0; k < cells[i][j].groupIds.size(); k++) {
+//	            		groupId = cells[i][j].groupIds.get(k);
+//	        			if (done == 2) {
+//	        				minY = minY + width;
+//	        				done = 0;
+//	        			}
+//	            		for (int l = 0; l < groupSize; l++) {
+//	            			computeCoordsHost(groups[groupId][l], minX, minY, heightCell, width, rand);
 //	            		}
-//        			}
+//	        			done++;
+//	            	}
+	        		// same strategy as the one commented above, but dividing the height
+	            	height  = heightCell / groupsCell;            		
+	            	for (int k = 0; k < cells[i][j].groupIds.size(); k++) {
+	            		groupId = cells[i][j].groupIds.get(k);
+	        			if (done == 2) {
+	        				minX = minX + height;
+	        				done = 0;
+	        			}
+	            		for (int l = 0; l < groupSize; l++) {
+	            			computeCoordsHost(groups[groupId][l], minX, minY, height, widthCell, rand);
+	            		}
+	        			done++;
+	            	}
         		} else {
         			width = widthCell / groupsCell;
             		for (int k = 0; k < cells[i][j].groupIds.size(); k++)
@@ -275,7 +314,7 @@ public abstract class FestivalMobility {
         int cellIdX, cellIdY;
         Random rand = new Random(seed);
         for (int i = 0; i < noOfGroups; i++) {
-        	System.out.println("group id " + i);
+//        	System.out.println("group id " + i);
         	 do {
                  cellIdX = rand.nextInt(rows);
                  cellIdY = rand.nextInt(cols);
@@ -286,13 +325,6 @@ public abstract class FestivalMobility {
 
         	 cells[cellIdX][cellIdY].groupIds.add(i);
         	 hostsCells[cellIdX][cellIdY] -= groupSize;
-        	 
-//        	 for (int l = 0; l < rows; l++) {
-//        		 for (int c = 0; c < cols; c++) {
-//        			 System.out.print(hostsCells[l][c] + " ");
-//        		 }
-//        		 System.out.println();
-//        	 }
         	 
         	 for (int j = 0; j < groupSize; j++) {
                  int hostId = groups[i][j];
@@ -311,17 +343,190 @@ public abstract class FestivalMobility {
         	// assign every traveler to a staring cell
         	 travelers[i].cellIdX = rand.nextInt(rows);
              travelers[i].cellIdY = rand.nextInt(cols);
-             computeCoords(i, firstTime, travelers, rand);
+             computeCoords(i, travelers, rand);
         }
     }
     
+    public CellsItem computeCAHostHelper(int hostId, float[][] CA) {
+    	CellsItem resCell = null;
+    	float maxCA = 0.0f;
+    	int row, col;
+
+		// sum the weights from the interaction matrix
+    	for (int i = 0; i < noHosts; i++) {
+    		// do not take into account nodes from the friends community
+    		if (interMat[hostId][i] != 0.0f && interMat[hostId][i] != 1.0f) {
+    			row = hosts[i].cellIdX;
+    			col = hosts[i].cellIdY;
+    		} else
+    			continue;
+    		CA[row][col] += interMat[hostId][i];
+    	}
+    	// normalize the results and compute the next goal cell
+    	for (int i = 0; i < rows; i++)
+    		for (int j = 0; j < cols; j++) {
+    			CA[i][j] /= cells[i][j].numberOfHosts;
+    			if (maxCA < CA[i][j]) {
+    				maxCA = CA[i][j];
+    				resCell = cells[i][j];
+    			}
+    		}
+ 
+    	return resCell;
+    }
+    
+    public CellsItem computeCAHost(int hostId) {
+    	for (int i = 0; i < rows; i++)
+			Arrays.fill(CA[i], 0.0f);
+    	
+    	return computeCAHostHelper(hostId, CA);
+    }
+    
+    public CellsItem computeCAGroup(int groupId) {
+    	CellsItem resCell = null;
+    	float maxCA = 0.0f;
+    	
+		for (int i = 0; i < rows; i++)
+			Arrays.fill(CA[i], 0.0f);
+		
+		for (int i = 0; i < groupSize; i++)
+			computeCAHostHelper(groups[groupId][i], CA);
+		
+    	for (int i = 0; i < rows; i++)
+    		for (int j = 0; j < cols; j++) {
+    			if (maxCA < CA[i][j]) {
+    				maxCA = CA[i][j];
+    				resCell = cells[i][j];
+    			}
+    		}
+
+    	return resCell;
+    }
+    
+    public void computeGoalCoords(int id, Host[] vec, Random rand) {
+    	int x, y;
+//    	x = rand.nextInt(rows);
+//      y = rand.nextInt(cols);
+    	x = vec[id].cellIdX;
+    	y = vec[id].cellIdY;
+    	
+    	vec[id].previousGoalX = vec[id].currentX;
+    	vec[id].previousGoalY = vec[id].currentY;
+    	
+    	vec[id].goalCurrentX = cells[x][y].minX + rand.nextDouble() * heightCell;
+		vec[id].goalCurrentY = cells[x][y].minY + rand.nextDouble() * widthCell;
+    }
+    
+    public boolean moveTowardsGoal(int id, Host[] vec) {
+    	  if ((vec[id].currentX > vec[id].goalCurrentX + vec[id].speed)
+                  || (vec[id].currentX < vec[id].goalCurrentX - vec[id].speed)
+                  || (vec[id].currentY > vec[id].goalCurrentY + vec[id].speed)
+                  || (vec[id].currentY < vec[id].goalCurrentY - vec[id].speed)) {
+              // move towards the goal
+              if (vec[id].currentX < (vec[id].goalCurrentX - vec[id].speed)) {
+                  vec[id].currentX = vec[id].currentX + vec[id].speed;
+              }
+              if (vec[id].currentX > (vec[id].goalCurrentX + vec[id].speed)) {
+                  vec[id].currentX = (vec[id].currentX) - vec[id].speed;
+              }
+              if (vec[id].currentY < (vec[id].goalCurrentY - vec[id].speed)) {
+                  vec[id].currentY = (vec[id].currentY) + vec[id].speed;
+              }
+              if (vec[id].currentY > (vec[id].goalCurrentY + vec[id].speed)) {
+                  vec[id].currentY = (vec[id].currentY) - vec[id].speed;
+              }
+              return true;
+    	  }
+    	  return false;
+    }
+    
+    public void moveTravelers(Random rand) {
+    	for (int i = 0; i < noOfTravelers; i++) {
+    		if (!moveTowardsGoal(i, travelers)) {
+    			// generate a new goal
+    			if (rand.nextDouble() > 0.999)
+    				computeGoalCoords(i, travelers, rand);
+    		}
+    	}
+    }
+    
+    public void coordsNearHost(Host host1, Host host2) {
+    	int x = host1.cellIdX, y = host1.cellIdY;
+    	host2.goalCurrentX = host1.currentX;
+    	// place host2 to the left of host1 or to the right, 0.5m away
+    	host2.goalCurrentY = host1.currentY + 0.5;
+    	if (host2.currentY > cells[x][y].minY + width)
+    		host2.goalCurrentY = host1.currentY + 0.5;
+    }
+    
+    public void moveHosts(long simTime) {
+    	int peerId;
+    	
+    	for (int i = 0; i < noHosts; i++) {
+    		// if the node has reached his goal cell
+    		if (!moveTowardsGoal(i, hosts)) {
+    			if (hosts[i].movementType == MOVE_NODE) {
+    				// check if the node needs to get back to its community
+    				if (hosts[i].returnTime < simTime) {
+    					// update the goal to the cell where its community is
+    					hosts[i].previousGoalX = hosts[i].currentX;
+    					hosts[i].previousGoalY = hosts[i].currentY;
+    					
+    					// pick a member of its community and generate coordinates near it
+    					for (int j = 0; j < groupSize; j++)
+    						if (groups[hosts[i].groupId][j] != i) {
+    							peerId = groups[hosts[i].groupId][j];
+    							hosts[i].cellIdX = hosts[peerId].cellIdX;
+    							hosts[i].cellIdY = hosts[peerId].cellIdY;
+    							coordsNearHost(hosts[peerId], hosts[i]);
+    							break;
+    						}
+    					
+    					hosts[i].movementType = MOVE_BACK;
+    					hosts[i].returnTime = -1;
+    				}
+    			} else if (hosts[i].movementType == MOVE_BACK) {
+    				hosts[i].movementType = -1;
+    				hosts[i].returnTime = -1;
+        			eligibleGroup[hosts[i].groupId] = true;
+    			}
+    		}
+    	}
+    }
+    
+    public int updateTarget() {
+    	int target = 0;
+    
+    	for (int i = 0; i < noHosts; i++) {
+    		if (hosts[i].movementType != -1) {
+    			target++;
+    			// System.out.println("movType = " + hosts[i].movementType);
+    		}
+    	}
+ 
+    	System.out.println("target " + target);
+    	return target;
+    }
+    
+    public void computeReturnTime(Host host, int destType, double simTime, Random rand) {
+    	if (destType == EDGE_CELL)
+    		host.returnTime = (long) (simTime + EDGE_MIN
+    				+ (EDGE_MAX - EDGE_MIN) * rand.nextDouble());
+    	else
+    		host.returnTime = (long) (simTime + FRIENDS_MIN 
+    				+ (FRIENDS_MAX - FRIENDS_MIN) * rand.nextDouble());
+    	System.out.println("ret time " + host.returnTime);
+    }
+    
 	protected void generateContacts() {
+		int x, y;
+		Random rand = new Random(seed);
 		initHosts();
+		initEgdeCellCoords();
 		generateInteractionMatrix();
 		
-		if (showRun) {
+		if (showRun)
 			setupDisplay();
-		}
 		
 		gridSetup();
 		placeGroupsOnGrid();
@@ -338,11 +543,80 @@ public abstract class FestivalMobility {
 				}
         	}
         	
+        	// compute next goal for traveler nodes
+        	// moveTravelers(rand);
         	
-        	
+        	// compute next goal for hosts
+        	moveHosts((long)simTime);
+        	// according to Zurich festival paper, 20% of the nodes
+        	// are on the move at any given time
+        	int target = (int) (noHosts * 0.05);
+        	System.out.println("TARGET = " + target);
+        	target -= updateTarget();
+        	System.out.println("TARGET UPDATE = " + target);
+        	while (target > 0) {
+            	// pick a node
+        		int id = rand.nextInt(noHosts);
+        		// System.out.println("id " + id + " groupid " + hosts[id].groupId 
+        		// 		+ " " + eligibleGroup[hosts[id].groupId]);
+        		if (eligibleGroup[hosts[id].groupId]) {
+        			eligibleGroup[hosts[id].groupId] = false;
+        			hosts[id].movementType = MOVE_NODE;
+        			x = hosts[id].cellIdX;
+        			y = hosts[id].cellIdY;
+        			// pick a destination according to Zipf's law
+        			int destType = zipfDistribution(rand.nextDouble());
+        			// int destType = 0;
+        			System.out.println("dest type " + destType);
+        			if (destType == EDGE_CELL) {
+        				int edgeCell = rand.nextInt(edgeCellX.length);
+        				System.out.println("edge cell " + edgeCell);
+        				hosts[id].cellIdX = edgeCellX[edgeCell];
+        				hosts[id].cellIdY = edgeCellY[edgeCell];
+        			} else if (destType == FRIENDS_CELL) {
+        				CellsItem goal = computeCAHost(id);
+        				hosts[id].cellIdX = goal.x;
+        				hosts[id].cellIdY = goal.y;
+        				System.out.println("x = " + goal.x + " y = " + goal.y);
+        			}
+        			// generate coords in that cell
+    				computeGoalCoords(id, hosts, rand);
+    				System.out.println("X = " + hosts[id].goalCurrentX + " Y = " + hosts[id].goalCurrentY);
+        			// compute the time to return to its community
+        			computeReturnTime(hosts[id], destType, simTime, rand);
+        			cells[x][y].numberOfHosts--;
+        			cells[hosts[id].cellIdX][hosts[id].cellIdY].numberOfHosts++;
+        			target--;
+        		}
+        	}
+        	// generate contacts
         }
-		
 	}
+	
+    /**
+     * Generates a Zipf distribution.
+     * @double value random value for the distribution
+     * @return Zipf value for the given index
+     */
+    private static int zipfDistribution(double value) {
+        int zipfExponent = 1;
+        int zipfSize = 2; // ordinea frecventei conform zifp's law frequency = 1/rank 0,1,2,3
+        double sum = 0;
+
+        for (int i = 1; i <= zipfSize; i++) {
+            double up = 1.0 / Math.pow(i, zipfExponent);
+            double down = 0;
+            for (int j = 1; j <= zipfSize; j++) {
+                down += 1 / Math.pow(j, zipfExponent);
+            }
+            sum += up / down;
+            if (value < sum) {
+                return i - 1;
+            }
+        }
+
+        return 0;
+    }
 	
     public void setupDisplay() {
     	frame = new JFrame();
@@ -357,8 +631,8 @@ public abstract class FestivalMobility {
 		frame.setTitle("Simulation");
 
 		// Display the frame
-		int frameWidth = 700;
-		int frameHeight = 700;
+		int frameWidth = 500;
+		int frameHeight = 1000;
 		frame.setSize(frameWidth, frameHeight);
 		frame.setVisible(true);
     }
