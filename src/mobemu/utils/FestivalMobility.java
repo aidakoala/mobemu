@@ -195,7 +195,7 @@ public abstract class FestivalMobility {
    		cellY = hostVec[hostId].cellIdY;
     	do {
 	   		// x1 and y1
-	   		hostVec[hostId].currentX = cells[cellX][cellY].minX + rand.nextDouble() * heightCell;
+    		hostVec[hostId].currentX = cells[cellX][cellY].minX + rand.nextDouble() * heightCell;
     		hostVec[hostId].currentY = cells[cellX][cellY].minY + rand.nextDouble() * widthCell;
     		// x2 and y2
     		hostVec[hostId].goalCurrentX = cells[cellX][cellY].minX + rand.nextDouble() * heightCell;
@@ -518,7 +518,52 @@ public abstract class FestivalMobility {
     	System.out.println("ret time " + host.returnTime);
     }
     
-	protected void generateContacts() {
+    public double getDistance(Host h1, Host h2) {
+    	return Math.sqrt((h1.currentX - h2.currentX) * (h1.currentX - h2.currentX)
+                + (h1.currentY - h2.currentY) * (h1.currentY - h2.currentY));
+    }
+    
+    public void generateContacts() {
+    	double radius;
+ 
+    	for (int i = 0; i < noHosts; i++) {
+    		for (int j = 0; j < noHosts; j++) {
+    			if (i != j) {
+    				if (hosts[i].protocol != hosts[j].protocol)
+    					continue;
+    				switch (hosts[i].protocol) {
+					case 0:
+						radius = FestivalMobility.BLUETOOTH_RADIUS;
+						break;
+					case 1:
+						radius = FestivalMobility.WIFIDIRECT_RADIUS;
+						break;
+					default:
+						// the nodes support both protocols
+						radius = FestivalMobility.WIFIDIRECT_RADIUS;
+					}
+    				double currentDist = getDistance(hosts[i], hosts[j]);
+    				if (currentDist < radius) {
+    			        // if the hosts has been previously disconnected, then they must be connected
+                        if (!isConnected[i][j]) {
+                            isConnected[i][j] = true;
+                            startContact(i, j, simTime);
+                            contacts++;
+                        }
+    				} else {
+    				      if (isConnected[i][j])
+                              if (simTime != 0) {
+                                  // if the hosts has been previously connected, then they must be disconnected
+                                  isConnected[i][j] = false;
+                                  endContact(i, j, simTime);
+                              }
+    				}
+    			}
+    		}
+    	}
+    }
+    
+	protected void runSimulation() {
 		int x, y;
 		Random rand = new Random(seed);
 		initHosts();
@@ -551,9 +596,9 @@ public abstract class FestivalMobility {
         	// according to Zurich festival paper, 20% of the nodes
         	// are on the move at any given time
         	int target = (int) (noHosts * 0.05);
-        	System.out.println("TARGET = " + target);
+//        	System.out.println("TARGET = " + target);
         	target -= updateTarget();
-        	System.out.println("TARGET UPDATE = " + target);
+//        	System.out.println("TARGET UPDATE = " + target);
         	while (target > 0) {
             	// pick a node
         		int id = rand.nextInt(noHosts);
@@ -566,22 +611,17 @@ public abstract class FestivalMobility {
         			y = hosts[id].cellIdY;
         			// pick a destination according to Zipf's law
         			int destType = zipfDistribution(rand.nextDouble());
-        			// int destType = 0;
-        			System.out.println("dest type " + destType);
         			if (destType == EDGE_CELL) {
         				int edgeCell = rand.nextInt(edgeCellX.length);
-        				System.out.println("edge cell " + edgeCell);
         				hosts[id].cellIdX = edgeCellX[edgeCell];
         				hosts[id].cellIdY = edgeCellY[edgeCell];
         			} else if (destType == FRIENDS_CELL) {
         				CellsItem goal = computeCAHost(id);
         				hosts[id].cellIdX = goal.x;
         				hosts[id].cellIdY = goal.y;
-        				System.out.println("x = " + goal.x + " y = " + goal.y);
         			}
         			// generate coords in that cell
     				computeGoalCoords(id, hosts, rand);
-    				System.out.println("X = " + hosts[id].goalCurrentX + " Y = " + hosts[id].goalCurrentY);
         			// compute the time to return to its community
         			computeReturnTime(hosts[id], destType, simTime, rand);
         			cells[x][y].numberOfHosts--;
@@ -589,7 +629,16 @@ public abstract class FestivalMobility {
         			target--;
         		}
         	}
-        	// generate contacts
+        	generateContacts();        	
+        }
+        // finish the simulation
+        for (int i = 0; i < noHosts; i++) {
+            for (int j = 0; j < noHosts; j++) {
+                if (isConnected[i][j] && simTime != 0) {
+                    //if the hosts have been previously connected, then they must be disconnected
+                    isConnected[i][j] = false;
+                }
+            }
         }
 	}
 	

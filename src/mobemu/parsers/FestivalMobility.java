@@ -64,7 +64,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		
 		this.seed = seed;
 	
-		generateContacts();
+		runSimulation();
 		
 		addContactsInProgress(simulationTime);
 		
