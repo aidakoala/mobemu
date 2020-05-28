@@ -24,6 +24,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	private long start = Long.MAX_VALUE;
 	private boolean[][] socialNetwork;
 	private List<Contact> contactsInProgress;
+	private Map<Integer, Context> context;
 	
 	public FestivalMobility(long simulationTime, float minHostSpeed, float maxHostSpeed, float bluetoothRadius,
 			float wifiDirectRadius, double connectionTreshold, float gridHeight, int rows, float gridWidth, int columns, 
@@ -34,6 +35,10 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		this.contactsInProgress = new ArrayList<>();
 		this.noHosts = computeNoHostFestival(gridHeight, gridWidth, rows, columns);
 		
+		this.context = new HashMap<>();
+		for (int i = 0; i < noHosts; i++) {
+			this.context.put(i, new Context(i));
+		}
 		/* setup simulation parameters */
 		// 5% of the hosts number will correspond to traveler hosts
 		this.noOfTravelers = (int) (0.03 * noHosts);
@@ -166,7 +171,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	
 	@Override
 	public Map<Integer, Context> getContextData() {
-		return null;
+		return context;
 	}
 
 	@Override

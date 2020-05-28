@@ -124,17 +124,17 @@ public class FestivalMobilityComponent extends JComponent {
 			g2d.fill(circle);
 		}
 		
-		for (int i = 0; i < fm.noOfTravelers; i++) {
-			int x = (int) (travelers[i].currentX * getSize().height / fm.height);
-			int y = (int) (travelers[i].currentY * getSize().width / fm.width);
-
-			int width = 10;
-			int height = 10;
-			
-			// g2d.setColor(colors[i % colors.length]);
+//		for (int i = 0; i < fm.noOfTravelers; i++) {
+//			int x = (int) (travelers[i].currentX * getSize().height / fm.height);
+//			int y = (int) (travelers[i].currentY * getSize().width / fm.width);
+//
+//			int width = 10;
+//			int height = 10;
+//			
+//
 //			Ellipse2D.Double circle = new Ellipse2D.Double(y, x, width, height);
 //			g2d.fill(circle);
-		}
+//		}
 
 		// draw the horizontal lines of the grid.
 		for (int i = 0; i < fm.rows; i++) {

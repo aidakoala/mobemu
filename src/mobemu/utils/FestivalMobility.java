@@ -21,25 +21,30 @@ public abstract class FestivalMobility {
 	public static final float BLUETOOTH_RADIUS = 5.0f;
 	public static final float WIFIDIRECT_RADIUS = 30.0f;
 
+	// TODO future work
 	public static final int MAX_PEERS_BT = 7;
 	public static final int MAX_PEERS_WD = 200;
 	
 	// types of movement
 	// assuming the shows start on the hour, the communities will be able
 	// to move between grids/stages when this feature will be implemented
-	public static final int MOVE_GROUP = 0;
-	public static final int MOVE_NODE = 1;
-	public static final int MOVE_BACK = 2;
+	public static final int MOVE_NODE = 0;
+	public static final int MOVE_BACK = 1;
+	public static final int MOVE_GROUP = 2;
+	// move nodes 3 times more often than moving a community
+	public static final int ZIPF_SIZE = 4; // 0, 1, 2 -> MOVE_NODE, 3 -> MOVE_GROUP
 	
 	// types of destination for node/community movement
 	public static final int EDGE_CELL = 0;
 	public static final int FRIENDS_CELL = 1;
+	public static final int DEST_TYPES = 2;
 	
 	// time spent by a node/community away
 	public static final int EDGE_MIN = 10 * 60; // 10 min
 	public static final int EDGE_MAX = 20 * 60; // 20 min
 	public static final int FRIENDS_MIN = 10 * 60; // 10 min
 	public static final int FRIENDS_MAX = 30 * 60; // 30 min
+	// TODO future work
 	public static final int NEW_SHOW_MIN = 40 * 60; // 40 min
 	public static final int NEW_SHOW_MAX = 60 * 60; // 1h
 	
@@ -116,7 +121,6 @@ public abstract class FestivalMobility {
     	hosts = new Host[noHosts];
     	for (int i = 0; i < noHosts; i++) {
     		hosts[i] = new Host(BLUETOOTH);
-    		// maybe generate a random speed
     		Random r = new Random();
     		hosts[i].speed = minHostSpeed + (maxHostSpeed - minHostSpeed) * r.nextDouble();
     	}
@@ -125,7 +129,6 @@ public abstract class FestivalMobility {
     	travelers = new Host[noOfTravelers];
     	for (int i = 0; i < noOfTravelers; i++) {
     		travelers[i] = new Host(BLUETOOTH);
-    		// maybe generate a random speed
     		travelers[i].speed = travelerSpeed;
     	}
     	
@@ -138,25 +141,24 @@ public abstract class FestivalMobility {
         for (int i = 0; i < noHosts; i++) {
             for (int j = 0; j < noHosts; j++) {
                 isConnected[i][j] = false;
-                // lastValues[i][j] = 0.0;
             }
         }
     }
     
     public void initEgdeCellCoords() {
-    	int noEdgeCells = 2 * rows + cols - 2;
+    	int noEdgeCells = 2 * rows + cols - 2 - 2;
     	
     	edgeCellX = new int[noEdgeCells];
     	edgeCellY = new int[noEdgeCells];
     	
     	// left, right, bottom
     	int i = 0;
-    	for (int l = 0; l < rows; l++) {
+    	for (int l = 1; l < rows; l++) {
     		edgeCellX[i] = l;
    			edgeCellY[i] = 0;
    			i++;
     	}
-    	for (int r = 0; r < rows; r++) {
+    	for (int r = 1; r < rows; r++) {
     		edgeCellX[i] = r;
     		edgeCellY[i] = cols - 1;
     		i++;
@@ -314,13 +316,9 @@ public abstract class FestivalMobility {
         int cellIdX, cellIdY;
         Random rand = new Random(seed);
         for (int i = 0; i < noOfGroups; i++) {
-//        	System.out.println("group id " + i);
         	 do {
                  cellIdX = rand.nextInt(rows);
                  cellIdY = rand.nextInt(cols);
-//
-//                 System.out.println("x = " + cellIdX + " y = " + cellIdY + 
-//                 		" hostCellMem = " +  hostsCells[cellIdX][cellIdY]);
              } while (hostsCells[cellIdX][cellIdY] - groupSize < 0);
 
         	 cells[cellIdX][cellIdY].groupIds.add(i);
@@ -405,8 +403,7 @@ public abstract class FestivalMobility {
     
     public void computeGoalCoords(int id, Host[] vec, Random rand) {
     	int x, y;
-//    	x = rand.nextInt(rows);
-//      y = rand.nextInt(cols);
+
     	x = vec[id].cellIdX;
     	y = vec[id].cellIdY;
     	
@@ -444,8 +441,11 @@ public abstract class FestivalMobility {
     	for (int i = 0; i < noOfTravelers; i++) {
     		if (!moveTowardsGoal(i, travelers)) {
     			// generate a new goal
-    			if (rand.nextDouble() > 0.999)
+    			if (rand.nextDouble() > 0.999) {
+    		    	travelers[i].cellIdX = rand.nextInt(rows);
+    		     	travelers[i].cellIdY = rand.nextInt(cols);
     				computeGoalCoords(i, travelers, rand);
+    			}
     		}
     	}
     }
@@ -489,6 +489,12 @@ public abstract class FestivalMobility {
     				hosts[i].movementType = -1;
     				hosts[i].returnTime = -1;
         			eligibleGroup[hosts[i].groupId] = true;
+    			} else if (hosts[i].movementType == MOVE_GROUP) {
+    				int groupId = hosts[i].groupId;
+    				for (int j = 0; j < groupSize; j++) {
+    					hosts[groups[groupId][j]].movementType = -1;
+    				}
+    				eligibleGroup[groupId] = true;
     			}
     		}
     	}
@@ -497,14 +503,10 @@ public abstract class FestivalMobility {
     public int updateTarget() {
     	int target = 0;
     
-    	for (int i = 0; i < noHosts; i++) {
-    		if (hosts[i].movementType != -1) {
+    	for (int i = 0; i < noHosts; i++)
+    		if (hosts[i].movementType != -1)
     			target++;
-    			// System.out.println("movType = " + hosts[i].movementType);
-    		}
-    	}
  
-    	System.out.println("target " + target);
     	return target;
     }
     
@@ -515,7 +517,6 @@ public abstract class FestivalMobility {
     	else
     		host.returnTime = (long) (simTime + FRIENDS_MIN 
     				+ (FRIENDS_MAX - FRIENDS_MIN) * rand.nextDouble());
-    	System.out.println("ret time " + host.returnTime);
     }
     
     public double getDistance(Host h1, Host h2) {
@@ -596,37 +597,22 @@ public abstract class FestivalMobility {
         	// according to Zurich festival paper, 20% of the nodes
         	// are on the move at any given time
         	int target = (int) (noHosts * 0.05);
-//        	System.out.println("TARGET = " + target);
         	target -= updateTarget();
-//        	System.out.println("TARGET UPDATE = " + target);
+
         	while (target > 0) {
             	// pick a node
         		int id = rand.nextInt(noHosts);
-        		// System.out.println("id " + id + " groupid " + hosts[id].groupId 
-        		// 		+ " " + eligibleGroup[hosts[id].groupId]);
         		if (eligibleGroup[hosts[id].groupId]) {
         			eligibleGroup[hosts[id].groupId] = false;
-        			hosts[id].movementType = MOVE_NODE;
-        			x = hosts[id].cellIdX;
-        			y = hosts[id].cellIdY;
-        			// pick a destination according to Zipf's law
-        			int destType = zipfDistribution(rand.nextDouble());
-        			if (destType == EDGE_CELL) {
-        				int edgeCell = rand.nextInt(edgeCellX.length);
-        				hosts[id].cellIdX = edgeCellX[edgeCell];
-        				hosts[id].cellIdY = edgeCellY[edgeCell];
-        			} else if (destType == FRIENDS_CELL) {
-        				CellsItem goal = computeCAHost(id);
-        				hosts[id].cellIdX = goal.x;
-        				hosts[id].cellIdY = goal.y;
+        			// decide between moving a node or its entire community
+        			int decision = zipfDistribution(rand.nextDouble(), ZIPF_SIZE);
+        			if (target % groupSize != 0)
+        				decision = 2;
+        			if (decision > 2) {
+        				target = moveGroup(id, rand, target);
+        			} else {
+            			target = moveNode(id, rand, target);
         			}
-        			// generate coords in that cell
-    				computeGoalCoords(id, hosts, rand);
-        			// compute the time to return to its community
-        			computeReturnTime(hosts[id], destType, simTime, rand);
-        			cells[x][y].numberOfHosts--;
-        			cells[hosts[id].cellIdX][hosts[id].cellIdY].numberOfHosts++;
-        			target--;
         		}
         	}
         	generateContacts();        	
@@ -642,14 +628,89 @@ public abstract class FestivalMobility {
         }
 	}
 	
+	public int moveNode(int id, Random rand, int target) {
+		int x, y;
+		
+		hosts[id].movementType = MOVE_NODE;
+		x = hosts[id].cellIdX;
+		y = hosts[id].cellIdY;
+		// pick a destination according to Zipf's law
+		int destType = zipfDistribution(rand.nextDouble(), DEST_TYPES);
+		if (destType == EDGE_CELL) {
+			int edgeCell = rand.nextInt(edgeCellX.length);
+			hosts[id].cellIdX = edgeCellX[edgeCell];
+			hosts[id].cellIdY = edgeCellY[edgeCell];
+		} else if (destType == FRIENDS_CELL) {
+			CellsItem goal = computeCAHost(id);
+			hosts[id].cellIdX = goal.x;
+			hosts[id].cellIdY = goal.y;
+		}
+		// generate coords in that cell
+		computeGoalCoords(id, hosts, rand);
+		// compute the time to return to its community
+		computeReturnTime(hosts[id], destType, simTime, rand);
+		cells[x][y].numberOfHosts--;
+		cells[hosts[id].cellIdX][hosts[id].cellIdY].numberOfHosts++;
+		target--;
+		
+		return target;
+	}
+	
+	public int moveGroup(int id, Random rand, int target) {
+		int x, y, newX = 0, newY = 0;
+		int groupId = hosts[id].groupId;
+		
+		x = hosts[id].cellIdX;
+		y = hosts[id].cellIdY;
+		for (int i = 0; i < groupSize; i++) {
+			hosts[groups[groupId][i]].movementType = MOVE_GROUP;
+		}
+		
+		int destType = zipfDistribution(rand.nextDouble(), DEST_TYPES);
+		if (destType == EDGE_CELL) {
+			int edgeCell = rand.nextInt(edgeCellX.length);
+			newX = edgeCellX[edgeCell];
+			newY = edgeCellY[edgeCell];
+			for (int i = 0; i < groupSize; i++) {
+				hosts[groups[groupId][i]].cellIdX = edgeCellX[edgeCell];
+				hosts[groups[groupId][i]].cellIdY = edgeCellY[edgeCell];
+			}
+		} else if (destType == FRIENDS_CELL) {
+			CellsItem goal = computeCAGroup(groupId);
+			newX = goal.x;
+			newY = goal.y;
+			for (int i = 0; i < groupSize; i++) {
+				hosts[groups[groupId][i]].cellIdX = goal.x;
+				hosts[groups[groupId][i]].cellIdY = goal.y;
+			}
+		}
+		
+		// pick the cell partition where this community is headed
+		int groupsCell = cells[newX][newY].numberOfHosts / groupSize;
+		int partitions = groupsCell /  2;
+		int partitionNo = rand.nextInt(partitions);
+		
+		float height = heightCell / partitions;
+		double minX = cells[newX][newY].minX + partitionNo * height;
+		
+		for (int i = 0; i < groupSize; i++) {
+			computeCoordsHost(groups[groupId][i], minX, cells[newX][newY].minY, height, widthCell, rand);
+		}
+		
+		cells[x][y].numberOfHosts -= groupSize;
+		cells[hosts[id].cellIdX][hosts[id].cellIdY].numberOfHosts += groupSize;
+		target -= groupSize;
+		return target;
+	}
+	
     /**
      * Generates a Zipf distribution.
      * @double value random value for the distribution
      * @return Zipf value for the given index
      */
-    private static int zipfDistribution(double value) {
+    private static int zipfDistribution(double value, int zipfSize) {
         int zipfExponent = 1;
-        int zipfSize = 2; // ordinea frecventei conform zifp's law frequency = 1/rank 0,1,2,3
+        // ordinea frecventei conform zifp's law frequency = 1/rank 0,1,2,3, ...
         double sum = 0;
 
         for (int i = 1; i <= zipfSize; i++) {
