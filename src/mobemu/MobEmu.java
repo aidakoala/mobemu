@@ -12,7 +12,9 @@ import mobemu.node.Node;
 import mobemu.node.Stats;
 import mobemu.parsers.FestivalMobility;
 import mobemu.parsers.HCMM;
+import mobemu.parsers.Host;
 import mobemu.parsers.SonarFestival;
+import mobemu.parsers.TimeAway;
 import mobemu.parsers.UPB;
 import mobemu.trace.Parser;
 
@@ -27,6 +29,9 @@ class TraceTime {
  * @author Radu
  */
 public class MobEmu {
+	// useful when working with FMM
+	public static int[][] groups;
+	public static HashMap<Integer, ArrayList<TimeAway>> timesAway;
 
 	public static void main(String[] args) {
 		float gridHeight = 30f;
@@ -50,7 +55,7 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-		Parser parser = new FestivalMobility(2 * 3600, 1.0f, 2.0f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
+		FestivalMobility parser = new FestivalMobility(2 * 3600, 1.0f, 2.0f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
 				gridWidth, cols, 0.1f, groupSize, 0.7f, 0.8f, showRun, 10, 0);
 //		 Parser parser = new HCMM(2 * 3600, 300, 0f, 0f, 0.1f, gridWidth, gridHeight, 10, 4, 10.0, 0.7,
 //		 		 0.5f, 0.8f, 0, showRun, 10, false);
@@ -119,12 +124,18 @@ public class MobEmu {
 		boolean altruism = false;
 
 		Node[] nodes = new Node[parser.getNodesNumber()];
+		Host[] hosts = parser.getHosts();
 		for (int i = 0; i < nodes.length; i++) {
 			// System.out.println(i);
 			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
 					altruism);
+			nodes[i].setGroupId(hosts[i].groupId);
 		}
+		// mark for garbage collection
+		parser.hosts = null;
+		groups = parser.getGroups();
+		timesAway = parser.getTimesAway();
 
 		System.out.println("Generated nodes");
 			

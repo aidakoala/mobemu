@@ -6,6 +6,9 @@ package mobemu.node;
 
 import java.util.*;
 
+import mobemu.MobEmu;
+import mobemu.parsers.TimeAway;
+
 /**
  * Class for a message exchanged between two nodes in an opportunistic network.
  *
@@ -395,6 +398,68 @@ public class Message implements Comparable<Message> {
             }
         }
 
+        return result;
+    }
+    
+    public static TimeAway getTimeAway(int nodeId, int groupId, long tick, long tickEnd, HashMap<Integer, ArrayList<TimeAway>> timesAway) {
+    	TimeAway timeAway = null;
+    	
+    	if (timesAway.get(groupId) != null) {
+    		ArrayList<TimeAway> vec = timesAway.get(groupId);
+    		for (int i = 0; i < vec.size(); i++) {
+    			if (nodeId == vec.get(i).nodeId) {
+    				if (vec.get(i).leaveTime > tickEnd) {
+    					timeAway = vec.get(i);
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	
+    	return timeAway;
+    }
+    
+    public static List<Message> generateMessages(Node[] nodes, int messageCount, int messageCopies, long tick, long tickEnd, Random random) {
+    	int nodeCount = nodes.length;
+        List<Message> result = new ArrayList<>();
+        HashMap<Integer, ArrayList<TimeAway>> timesAway = MobEmu.timesAway;
+        int[][] groups = MobEmu.groups;
+        long timestamp;
+      
+        for (int i = 0; i < nodeCount; i++) {
+        	// if we have a situation where this node was away from its community
+        	// in the current time interval, pick a community member and generate
+        	// messages between these two nodes
+        	TimeAway timeAway = getTimeAway(i, nodes[i].groupId, tick, tickEnd, timesAway);
+        	if (timeAway != null) {
+        		int groudId = nodes[i].groupId, peerId = 0;
+        		for (int j = 0; j < groups[groudId].length; j++) {
+        			if (groups[groudId][j] != i) {
+        				peerId = groups[groudId][j];
+        				break;
+        			}
+        		}
+        		for (int j = 0; j < messageCount; j++) {
+        			timestamp = (long) (timeAway.leaveTime + (timeAway.returnTime - timeAway.leaveTime) 
+        					* random.nextDouble());
+        			result.add(nodes[i].generateMessage(new Message(i, peerId, "", timestamp, messageCopies)));
+        			timestamp = (long) (timeAway.leaveTime + (timeAway.returnTime - timeAway.leaveTime) 
+        					* random.nextDouble());
+        			result.add(nodes[i].generateMessage(new Message(peerId, i, "", timestamp, messageCopies)));
+        		}
+        	} else {
+            	// generate messages towards nodes from its social network
+        		boolean[] socialNetwork = nodes[i].socialNetwork;
+        		for (int j = 0; j < messageCount; j++) {
+        			int dest = random.nextInt(nodes.length);
+        			if (socialNetwork[dest]) {
+        				timestamp = (long) (tick + (tickEnd - tick) * random.nextDouble());
+        				result.add(nodes[i].generateMessage(new Message(i, dest, "", timestamp, messageCopies)));
+        			}
+            	}
+        	}
+        }
+        
         return result;
     }
 

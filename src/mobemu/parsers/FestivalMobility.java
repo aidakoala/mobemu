@@ -162,6 +162,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	}
 	@Override
 	public int getNodesNumber() {
+		// maybe also consider the traveler nodes
 		return noHosts;
 	}
 	@Override
@@ -172,6 +173,22 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	@Override
 	public Map<Integer, Context> getContextData() {
 		return context;
+	}
+	
+	public int[][] getGroups() {
+		return groups;
+	}
+	
+	public int getGroupSize() {
+		return groupSize;
+	}
+	
+	public HashMap<Integer, ArrayList<TimeAway>> getTimesAway() {
+		return timesAway;
+	}
+
+	public Host[] getHosts() {
+		return hosts;
 	}
 
 	@Override
@@ -247,6 +264,9 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 				// although it is not necessarily true, the social
 				// relationships will be assumed to be symmetric
 				interMat[hostId][i] = interMat[i][hostId];
+				// also complete social network information
+				socialNetwork[i][hostId] = true;
+				socialNetwork[hostId][i] = true;
 				noFriends--;
 			}
 		}

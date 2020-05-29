@@ -3,7 +3,9 @@ package mobemu.utils;
 import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -12,6 +14,7 @@ import javax.swing.JTextArea;
 import mobemu.parsers.CellsItem;
 import mobemu.parsers.Host;
 import mobemu.parsers.ProbRange;
+import mobemu.parsers.TimeAway;
 
 public abstract class FestivalMobility {
 	public static final int BLUETOOTH = 0;
@@ -84,7 +87,7 @@ public abstract class FestivalMobility {
     protected long sleepTime;
 	
     /* internal data structures */
-    protected Host[] hosts;
+    public Host[] hosts;
     protected Host[] travelers;
     protected float interMat[][];
     protected int[][] groups;
@@ -95,6 +98,8 @@ public abstract class FestivalMobility {
     int[] edgeCellY;
     float[][] CA; // cell attractivity
     boolean eligibleGroup[];
+    // useful when generating messages
+    protected HashMap<Integer, ArrayList<TimeAway>> timesAway = new HashMap<>();
     
     // density of people in a crowd mesured in people / m^2
     protected float maxDensity = 4.0f;
@@ -337,12 +342,12 @@ public abstract class FestivalMobility {
         // generate x, y coordinates for every host in a group
         computeCoordsGroups(rand);
 
-        for (int i = 0; i < noOfTravelers; i++) {
-        	// assign every traveler to a staring cell
-        	 travelers[i].cellIdX = rand.nextInt(rows);
-             travelers[i].cellIdY = rand.nextInt(cols);
-             computeCoords(i, travelers, rand);
-        }
+//        for (int i = 0; i < noOfTravelers; i++) {
+//        	// assign every traveler to a staring cell
+//        	 travelers[i].cellIdX = rand.nextInt(rows);
+//             travelers[i].cellIdY = rand.nextInt(cols);
+//             computeCoords(i, travelers, rand);
+//        }
     }
     
     public CellsItem computeCAHostHelper(int hostId, float[][] CA) {
@@ -649,6 +654,16 @@ public abstract class FestivalMobility {
 		computeGoalCoords(id, hosts, rand);
 		// compute the time to return to its community
 		computeReturnTime(hosts[id], destType, simTime, rand);
+		// log the leave and return time for future message generation
+		TimeAway timeAway = new TimeAway(id, (long)simTime, hosts[id].returnTime);
+		if (timesAway.containsKey(hosts[id].groupId)) {
+			timesAway.get(hosts[id].groupId).add(timeAway);
+		} else {
+			ArrayList<TimeAway> list = new ArrayList<TimeAway>();
+			list.add(timeAway);
+			timesAway.put(hosts[id].groupId, list);
+		}
+		
 		cells[x][y].numberOfHosts--;
 		cells[hosts[id].cellIdX][hosts[id].cellIdY].numberOfHosts++;
 		target--;

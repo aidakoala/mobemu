@@ -69,7 +69,11 @@ public abstract class Node {
     protected static final int HOURS_IN_DAY = 24; // total number of hours in a day
     protected static final int DAYS_IN_WEEK = 7; // total number of days in a week
     protected static final int MILLIS_IN_DAY = 1000 * 60 * 60 * 24; // total number of milliseconds in a day
-
+    protected static final int MILLIS_IN_HOUR = 1000 * 60 * 60;
+    
+    // Festival scenario
+    int groupId;
+    
     /**
      * Constructor for the {@link Node} class.
      *
@@ -154,6 +158,10 @@ public abstract class Node {
         this.wifiMetrics = new WiFiMetrics(id, traceStart, traceEnd);
     }
 
+    public void setGroupId(int groupId) {
+    	this.groupId = groupId;
+    }
+
     /**
      * Runs an opportunistic algorithm.
      *
@@ -169,8 +177,9 @@ public abstract class Node {
     public static List<Message> runTrace(Node[] nodes, Trace trace, boolean batteryComputation, boolean dissemination, long seed) {
 //        int messageCopies = nodes.length;
 //        int messageCount = nodes.length;
+    	// we will assume a festival node generates 4 messages per hour
     	int messageCopies = 100;
-    	int messageCount = 100;
+    	int messageCount = 10;
 
         int contactCount = trace.getContactsCount();
         long startTime = trace.getStartTime();
@@ -184,7 +193,8 @@ public abstract class Node {
         Random messageRandom = new Random(seed);
 
         List<Message> messages = new ArrayList<>();
-
+        int generationHour = 0;
+        
         for (long tick = startTime; tick < endTime; tick += sampleTime) {
             int count = 0;
 
@@ -203,19 +213,27 @@ public abstract class Node {
 
             currentDay.setTimeInMillis(tick);
 
-            if (currentDay.get(Calendar.DATE) != previousDay) {
-                generate = true;
-                previousDay = currentDay.get(Calendar.DATE);
-                generationTime = Message.generateMessageTime(messageRandom.nextDouble());
-            }
+//            if (currentDay.get(Calendar.DATE) != previousDay) {
+//                generate = true;
+//                previousDay = currentDay.get(Calendar.DATE);
+//                generationTime = Message.generateMessageTime(messageRandom.nextDouble());
+//            }
 
             // generate messages
-            if (generate && generationTime.get(Calendar.HOUR) == currentDay.get(Calendar.HOUR)) {
-                messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick, dissemination, messageRandom));
-                generate = false;
-                System.out.println("Generated a batch of messages at " + generationTime.get(Calendar.HOUR));
-            }
+//            if (generate && generationTime.get(Calendar.HOUR) == currentDay.get(Calendar.HOUR)) {
+//                messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick, dissemination, messageRandom));
+//                generate = false;
+//                System.out.println("Generated a batch of messages at " + generationTime.get(Calendar.HOUR));
+//            }
 
+            if (currentDay.get(Calendar.HOUR) == generationHour) {
+            	messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick,
+            			tick + MILLIS_IN_HOUR, messageRandom));
+            	generationHour++;
+            	System.out.println("Generated a batch of messages at " + generationTime.get(Calendar.HOUR));
+            }
+            
+            // multithreading?
             for (int i = 0; i < contactCount; i++) {
                 Contact contact = trace.getContactAt(i);
 
