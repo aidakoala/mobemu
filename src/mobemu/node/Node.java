@@ -515,6 +515,7 @@ public abstract class Node {
         day.setTimeInMillis(currentTime);
         int hour = day.get(Calendar.HOUR_OF_DAY);
 
+        // (int) ((double) (currentTime - traceStart) / MILLIS_IN_DAY) in case there is more than one day
         encountersPerHour[hour][(int) ((double) (currentTime - traceStart) / MILLIS_IN_DAY)][id]++;
     }
 

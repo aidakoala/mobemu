@@ -410,17 +410,18 @@ public class Message implements Comparable<Message> {
         	if (!inChatPair[i]) {
             	// generate messages towards nodes from its social network
         		boolean[] socialNetwork = nodes[i].socialNetwork;
-        		while (messageCount > 0) {
+        		int messageNo = messageCount;
+        		while (messageNo > 0) {
         			int dest = random.nextInt(nodes.length);
         			if (socialNetwork[dest]) {
         				result.add(nodes[i].generateMessage(new Message(i, dest, "", tick, messageCopies)));
-        				messageCount--;
+        				messageNo--;
         			}
             	}
         	}
         }
         
-        System.out.println("generated messages = " + result.size());
+        System.out.println("SOCIAL generated messages = " + result.size());
         return result;
     }
     
@@ -434,12 +435,12 @@ public class Message implements Comparable<Message> {
          	while (it.hasNext()) {
          		ChatPair chatPair = it.next();
          		if (chatPair.returnTime < tick) {
-         			System.out.println("ACTIVE pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
+         			System.out.println("OVER pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
          			inChatPair[chatPair.nodeAway] = false;
          			inChatPair[chatPair.nodeDest] = false;
          			it.remove();
          		} else if (chatPair.leaveTime < tick) {
-         			System.out.println("OVER pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
+         			System.out.println("ACTIVE pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
          			inChatPair[chatPair.nodeAway] = true;
          			inChatPair[chatPair.nodeDest] = true;
          			activeChatPairs.add(chatPair);
