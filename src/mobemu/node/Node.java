@@ -181,7 +181,7 @@ public abstract class Node {
     public static List<Message> runTrace(Node[] nodes, Trace trace, boolean batteryComputation, boolean dissemination, long seed) {
     	// we will assume a festival node generates 10 messages per hour
     	int messageCopies = 100;
-    	int messageCount = 10;
+    	int messageCount = 4;
 
         int contactCount = trace.getContactsCount();
         long startTime = trace.getStartTime();
