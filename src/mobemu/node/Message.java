@@ -420,6 +420,7 @@ public class Message implements Comparable<Message> {
         	}
         }
         
+        System.out.println("generated messages = " + result.size());
         return result;
     }
     
@@ -433,10 +434,12 @@ public class Message implements Comparable<Message> {
          	while (it.hasNext()) {
          		ChatPair chatPair = it.next();
          		if (chatPair.returnTime < tick) {
+         			System.out.println("ACTIVE pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
          			inChatPair[chatPair.nodeAway] = false;
          			inChatPair[chatPair.nodeDest] = false;
          			it.remove();
          		} else if (chatPair.leaveTime < tick) {
+         			System.out.println("OVER pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
          			inChatPair[chatPair.nodeAway] = true;
          			inChatPair[chatPair.nodeDest] = true;
          			activeChatPairs.add(chatPair);
@@ -458,6 +461,7 @@ public class Message implements Comparable<Message> {
         	result.add(nodes[dst].generateMessage(new Message(dst, src, "", tick, messageCopies)));
         }
         
+        System.out.println("CHAT PAIR generated messages = " + result.size());
     	return result;
     }
 

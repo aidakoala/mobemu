@@ -10,8 +10,9 @@ public class ChatPair {
 		super();
 		this.nodeAway = nodeAway;
 		this.nodeDest = nodeDest;
-		this.leaveTime = leaveTime;
-		this.returnTime = returnTime;
+		// convert seconds to milliseconds
+		this.leaveTime = leaveTime * 1000;
+		this.returnTime = returnTime * 1000;
 	}
 
 }

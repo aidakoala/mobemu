@@ -224,7 +224,6 @@ public abstract class Node {
             // generate messages between chat pairs
             if (tick == chatPairsGenerationTime)  {
             	LinkedList<ChatPair> activeChatPairs = Message.updateActiveChatPairs(chatPairs, inChatPair, tick);
-            	// establish chat pairs for the next interval
             	messages.addAll(Message.generateMessagesChatPairs(nodes, activeChatPairs, messageCopies,
             			tick, messageRandom));
             	chatPairsGenerationTime += MILLIS_IN_6MIN;
@@ -234,7 +233,7 @@ public abstract class Node {
             	messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick,
             					inChatPair, messageRandom));
             	generationHour++;
-            	System.out.println("Generated a batch of messages at " + generationTime.get(Calendar.HOUR));
+            	System.out.println("Generated a batch of messages at " + currentDay.get(Calendar.HOUR));
             }
             
             // multithreading?
