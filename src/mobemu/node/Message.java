@@ -7,7 +7,7 @@ package mobemu.node;
 import java.util.*;
 
 import mobemu.MobEmu;
-import mobemu.parsers.TimeAway;
+import mobemu.parsers.ChatPair;
 
 /**
  * Class for a message exchanged between two nodes in an opportunistic network.
@@ -400,67 +400,65 @@ public class Message implements Comparable<Message> {
 
         return result;
     }
-    
-    public static TimeAway getTimeAway(int nodeId, int groupId, long tick, long tickEnd, HashMap<Integer, ArrayList<TimeAway>> timesAway) {
-    	TimeAway timeAway = null;
-    	
-    	if (timesAway.get(groupId) != null) {
-    		ArrayList<TimeAway> vec = timesAway.get(groupId);
-    		for (int i = 0; i < vec.size(); i++) {
-    			if (nodeId == vec.get(i).nodeId) {
-    				if (vec.get(i).leaveTime > tickEnd) {
-    					timeAway = vec.get(i);
-    					break;
-    				}
-    			}
-    		}
-    	}
-    	
-    	return timeAway;
-    }
-    
-    public static List<Message> generateMessages(Node[] nodes, int messageCount, int messageCopies, long tick, long tickEnd, Random random) {
+
+    public static List<Message> generateMessages(Node[] nodes, int messageCount, int messageCopies, long tick,
+    		boolean[] inChatPair, Random random) {
     	int nodeCount = nodes.length;
         List<Message> result = new ArrayList<>();
-        HashMap<Integer, ArrayList<TimeAway>> timesAway = MobEmu.timesAway;
-        int[][] groups = MobEmu.groups;
-        long timestamp;
       
         for (int i = 0; i < nodeCount; i++) {
-        	// if we have a situation where this node was away from its community
-        	// in the current time interval, pick a community member and generate
-        	// messages between these two nodes
-        	TimeAway timeAway = getTimeAway(i, nodes[i].groupId, tick, tickEnd, timesAway);
-        	if (timeAway != null) {
-        		int groudId = nodes[i].groupId, peerId = 0;
-        		for (int j = 0; j < groups[groudId].length; j++) {
-        			if (groups[groudId][j] != i) {
-        				peerId = groups[groudId][j];
-        				break;
-        			}
-        		}
-        		for (int j = 0; j < messageCount; j++) {
-        			timestamp = (long) (timeAway.leaveTime + (timeAway.returnTime - timeAway.leaveTime) 
-        					* random.nextDouble());
-        			result.add(nodes[i].generateMessage(new Message(i, peerId, "", timestamp, messageCopies)));
-        			timestamp = (long) (timeAway.leaveTime + (timeAway.returnTime - timeAway.leaveTime) 
-        					* random.nextDouble());
-        			result.add(nodes[i].generateMessage(new Message(peerId, i, "", timestamp, messageCopies)));
-        		}
-        	} else {
+        	if (!inChatPair[i]) {
             	// generate messages towards nodes from its social network
         		boolean[] socialNetwork = nodes[i].socialNetwork;
-        		for (int j = 0; j < messageCount; j++) {
+        		while (messageCount > 0) {
         			int dest = random.nextInt(nodes.length);
         			if (socialNetwork[dest]) {
-        				timestamp = (long) (tick + (tickEnd - tick) * random.nextDouble());
-        				result.add(nodes[i].generateMessage(new Message(i, dest, "", timestamp, messageCopies)));
+        				result.add(nodes[i].generateMessage(new Message(i, dest, "", tick, messageCopies)));
+        				messageCount--;
         			}
             	}
         	}
         }
         
         return result;
+    }
+    
+    public static LinkedList<ChatPair> updateActiveChatPairs(HashMap<Integer, LinkedList<ChatPair>> chatPairs,
+    		boolean[] inChatPair, long tick) {
+    	LinkedList<ChatPair> activeChatPairs = new LinkedList<ChatPair>();
+    	
+    	for (Integer key : chatPairs.keySet()) {
+         	LinkedList<ChatPair> groupPairs = chatPairs.get(key);
+         	Iterator<ChatPair> it = groupPairs.iterator();
+         	while (it.hasNext()) {
+         		ChatPair chatPair = it.next();
+         		if (chatPair.returnTime < tick) {
+         			inChatPair[chatPair.nodeAway] = false;
+         			inChatPair[chatPair.nodeDest] = false;
+         			it.remove();
+         		} else if (chatPair.leaveTime < tick) {
+         			inChatPair[chatPair.nodeAway] = true;
+         			inChatPair[chatPair.nodeDest] = true;
+         			activeChatPairs.add(chatPair);
+         		}
+         	}
+    	}
+    	
+    	return activeChatPairs;	
+    }
+    
+    public static List<Message> generateMessagesChatPairs(Node[] nodes, LinkedList<ChatPair> activeChatPairs, 
+    		int messageCopies, long tick, Random random) {
+        List<Message> result = new ArrayList<>();
+
+        for (ChatPair chatPair : activeChatPairs) {
+        	int src = chatPair.nodeAway;
+        	int dst = chatPair.nodeDest;
+        	result.add(nodes[src].generateMessage(new Message(src, dst, "", tick, messageCopies)));
+        	result.add(nodes[dst].generateMessage(new Message(dst, src, "", tick, messageCopies)));
+        }
+        
+    	return result;
     }
 
     /**

@@ -5,7 +5,10 @@
 package mobemu.node;
 
 import java.util.*;
+
+import mobemu.MobEmu;
 import mobemu.communitydetection.KClique;
+import mobemu.parsers.ChatPair;
 import mobemu.trace.Contact;
 import mobemu.trace.Trace;
 
@@ -70,6 +73,7 @@ public abstract class Node {
     protected static final int DAYS_IN_WEEK = 7; // total number of days in a week
     protected static final int MILLIS_IN_DAY = 1000 * 60 * 60 * 24; // total number of milliseconds in a day
     protected static final int MILLIS_IN_HOUR = 1000 * 60 * 60;
+    protected static final int MILLIS_IN_6MIN = 1000 * 60 * 6;
     
     // Festival scenario
     int groupId;
@@ -175,9 +179,7 @@ public abstract class Node {
      * @return list of messages generated during the trace
      */
     public static List<Message> runTrace(Node[] nodes, Trace trace, boolean batteryComputation, boolean dissemination, long seed) {
-//        int messageCopies = nodes.length;
-//        int messageCount = nodes.length;
-    	// we will assume a festival node generates 4 messages per hour
+    	// we will assume a festival node generates 10 messages per hour
     	int messageCopies = 100;
     	int messageCount = 10;
 
@@ -193,8 +195,14 @@ public abstract class Node {
         Random messageRandom = new Random(seed);
 
         List<Message> messages = new ArrayList<>();
-        int generationHour = 0;
-        
+        currentDay.setTimeInMillis(startTime);
+        int generationHour =  currentDay.get(Calendar.HOUR);
+        long chatPairsGenerationTime = MILLIS_IN_6MIN;
+       
+        boolean[] inChatPair = new boolean[nodes.length];
+        Arrays.fill(inChatPair, false);
+        HashMap<Integer, LinkedList<ChatPair>> chatPairs = MobEmu.chatPairs;
+
         for (long tick = startTime; tick < endTime; tick += sampleTime) {
             int count = 0;
 
@@ -213,22 +221,18 @@ public abstract class Node {
 
             currentDay.setTimeInMillis(tick);
 
-//            if (currentDay.get(Calendar.DATE) != previousDay) {
-//                generate = true;
-//                previousDay = currentDay.get(Calendar.DATE);
-//                generationTime = Message.generateMessageTime(messageRandom.nextDouble());
-//            }
-
-            // generate messages
-//            if (generate && generationTime.get(Calendar.HOUR) == currentDay.get(Calendar.HOUR)) {
-//                messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick, dissemination, messageRandom));
-//                generate = false;
-//                System.out.println("Generated a batch of messages at " + generationTime.get(Calendar.HOUR));
-//            }
+            // generate messages between chat pairs
+            if (tick == chatPairsGenerationTime)  {
+            	LinkedList<ChatPair> activeChatPairs = Message.updateActiveChatPairs(chatPairs, inChatPair, tick);
+            	// establish chat pairs for the next interval
+            	messages.addAll(Message.generateMessagesChatPairs(nodes, activeChatPairs, messageCopies,
+            			tick, messageRandom));
+            	chatPairsGenerationTime += MILLIS_IN_6MIN;
+            }
 
             if (currentDay.get(Calendar.HOUR) == generationHour) {
             	messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick,
-            			tick + MILLIS_IN_HOUR, messageRandom));
+            					inChatPair, messageRandom));
             	generationHour++;
             	System.out.println("Generated a batch of messages at " + generationTime.get(Calendar.HOUR));
             }

@@ -14,7 +14,7 @@ import mobemu.parsers.FestivalMobility;
 import mobemu.parsers.HCMM;
 import mobemu.parsers.Host;
 import mobemu.parsers.SonarFestival;
-import mobemu.parsers.TimeAway;
+import mobemu.parsers.ChatPair;
 import mobemu.parsers.UPB;
 import mobemu.trace.Parser;
 
@@ -31,7 +31,7 @@ class TraceTime {
 public class MobEmu {
 	// useful when working with FMM
 	public static int[][] groups;
-	public static HashMap<Integer, ArrayList<TimeAway>> timesAway;
+	public static HashMap<Integer, LinkedList<ChatPair>> chatPairs;
 
 	public static void main(String[] args) {
 		float gridHeight = 30f;
@@ -135,7 +135,7 @@ public class MobEmu {
 		// mark for garbage collection
 		parser.hosts = null;
 		groups = parser.getGroups();
-		timesAway = parser.getTimesAway();
+		chatPairs = parser.getChatPairs();
 
 		System.out.println("Generated nodes");
 			

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -183,8 +184,8 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		return groupSize;
 	}
 	
-	public HashMap<Integer, ArrayList<TimeAway>> getTimesAway() {
-		return timesAway;
+	public HashMap<Integer, LinkedList<ChatPair>> getChatPairs() {
+		return chatPairs;
 	}
 
 	public Host[] getHosts() {

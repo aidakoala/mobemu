@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -14,7 +15,7 @@ import javax.swing.JTextArea;
 import mobemu.parsers.CellsItem;
 import mobemu.parsers.Host;
 import mobemu.parsers.ProbRange;
-import mobemu.parsers.TimeAway;
+import mobemu.parsers.ChatPair;
 
 public abstract class FestivalMobility {
 	public static final int BLUETOOTH = 0;
@@ -99,7 +100,7 @@ public abstract class FestivalMobility {
     float[][] CA; // cell attractivity
     boolean eligibleGroup[];
     // useful when generating messages
-    protected HashMap<Integer, ArrayList<TimeAway>> timesAway = new HashMap<>();
+    protected HashMap<Integer, LinkedList<ChatPair>> chatPairs = new HashMap<>();
     
     // density of people in a crowd mesured in people / m^2
     protected float maxDensity = 4.0f;
@@ -494,6 +495,8 @@ public abstract class FestivalMobility {
     				hosts[i].movementType = -1;
     				hosts[i].returnTime = -1;
         			eligibleGroup[hosts[i].groupId] = true;
+        			// edit return time for chat pair
+        			
     			} else if (hosts[i].movementType == MOVE_GROUP) {
     				int groupId = hosts[i].groupId;
     				for (int j = 0; j < groupSize; j++) {
@@ -654,14 +657,26 @@ public abstract class FestivalMobility {
 		computeGoalCoords(id, hosts, rand);
 		// compute the time to return to its community
 		computeReturnTime(hosts[id], destType, simTime, rand);
+
 		// log the leave and return time for future message generation
-		TimeAway timeAway = new TimeAway(id, (long)simTime, hosts[id].returnTime);
-		if (timesAway.containsKey(hosts[id].groupId)) {
-			timesAway.get(hosts[id].groupId).add(timeAway);
+		// pick a pair for this node to chat with
+		int groudId = hosts[id].groupId, peerId = 0;
+		// if we have a situation where this node was away from its community
+    	// for a period of time, pick a community member and later
+    	// generate messages between these two nodes
+		for (int j = 0; j < groups[groudId].length; j++) {
+			if (groups[groudId][j] != id) {
+				peerId = groups[groudId][j];
+				break;
+			}
+		}
+		ChatPair chatPair = new ChatPair(id, peerId, (long)simTime, hosts[id].returnTime);
+		if (chatPairs.containsKey(hosts[id].groupId)) {
+			chatPairs.get(hosts[id].groupId).add(chatPair);
 		} else {
-			ArrayList<TimeAway> list = new ArrayList<TimeAway>();
-			list.add(timeAway);
-			timesAway.put(hosts[id].groupId, list);
+			LinkedList<ChatPair> list = new LinkedList<ChatPair>();
+			list.add(chatPair);
+			chatPairs.put(hosts[id].groupId, list);
 		}
 		
 		cells[x][y].numberOfHosts--;
@@ -670,6 +685,8 @@ public abstract class FestivalMobility {
 		
 		return target;
 	}
+	
+	
 	
 	public int moveGroup(int id, Random rand, int target) {
 		int x, y, newX = 0, newY = 0;
