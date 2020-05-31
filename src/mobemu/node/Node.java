@@ -252,7 +252,6 @@ public abstract class Node {
 
                     Node observer = nodes[contact.getObserver()];
                     Node observed = nodes[contact.getObserved()];
-                    System.out.println("node1 " + observer + " node2 " + observed);
 
                     long contactDuration = 0;
                     boolean newContact = (contact.getStart() == tick);
@@ -264,6 +263,7 @@ public abstract class Node {
                     observer.run(observed, tick, contactDuration, newContact, tick - startTime, sampleTime);
                 }
             }
+            System.out.println("contacts so far = " + count);
 
             // remove unused contacts.
             for (int i = count - 1; i >= 0; i--) {
