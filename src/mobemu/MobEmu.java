@@ -13,11 +13,9 @@ import mobemu.node.Message;
 import mobemu.node.Node;
 import mobemu.node.Stats;
 import mobemu.parsers.FestivalMobility;
-import mobemu.parsers.HCMM;
 import mobemu.parsers.Host;
 import mobemu.parsers.SonarFestival;
 import mobemu.parsers.ChatPair;
-import mobemu.parsers.UPB;
 import mobemu.trace.Parser;
 
 class TraceTime {
@@ -45,6 +43,7 @@ public class MobEmu {
 		long startTime = System.nanoTime();
 		// message average size 100kB, buffer capacity 500MB
 		int dataMemory = 5000;
+		String fileName = "fmm-contacts-epidemic.csv";
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
 		// dimensiunea spatiului de simulare de 200 pe 200 m,
@@ -59,8 +58,8 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-		FestivalMobility parser = new FestivalMobility(2 * 3600, 1.0f, 2.0f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
-				gridWidth, cols, 0.1f, groupSize, 0.7f, 0.8f, showRun, 10, 0);
+		FestivalMobility parser = new FestivalMobility(2 * 3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
+				gridWidth, cols, 1.0f, groupSize, 0.7f, 0.8f, showRun, 10, 0, fileName);
 //		 Parser parser = new HCMM(2 * 3600, 300, 0f, 0f, 0.1f, gridWidth, gridHeight, 10, 4, 10.0, 0.7,
 //		 		 0.5f, 0.8f, 0, showRun, 10, false);
 		// Parser parser = new UPB(UPB.UpbTrace.UPB2012, false);
@@ -130,13 +129,12 @@ public class MobEmu {
 		Node[] nodes = new Node[parser.getNodesNumber()];
 		Host[] hosts = parser.getHosts();
 		for (int i = 0; i < nodes.length; i++) {
-			// System.out.println(i);
-//			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
-//					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
-//					altruism);
-			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
-					SprayAndWait.Type.SOURCE);
+			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
+					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
+					altruism);
+//			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+//					SprayAndWait.Type.SOURCE);
 //			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 //					Node.MILLIS_IN_15MIN);

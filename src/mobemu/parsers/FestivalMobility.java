@@ -1,7 +1,10 @@
 package mobemu.parsers;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.univocity.parsers.common.processor.BeanWriterProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 
 import mobemu.node.Context;
 import mobemu.trace.Contact;
@@ -30,7 +36,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	public FestivalMobility(long simulationTime, float minHostSpeed, float maxHostSpeed, float bluetoothRadius,
 			float wifiDirectRadius, double connectionTreshold, float gridHeight, int rows, float gridWidth, int columns, 
 			float travelSpeed, int groupSize, double rewiringProb, double remainingProb, boolean showRun, long sleepTime,
-			int seed) {
+			int seed, String fileName) {
 
 		this.trace = new Trace("FestivalMobility");
 		this.contactsInProgress = new ArrayList<>();
@@ -70,9 +76,25 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		
 		this.seed = seed;
 	
-		runSimulation();
+		// create a file where to write the contacts for later use
+		FileOutputStream fos;
+		DataOutputStream outStream;
+		CsvWriterSettings settings = new CsvWriterSettings();
+		settings.setSkipEmptyLines(true);
+		settings.setRowWriterProcessor(new BeanWriterProcessor<Contact>(Contact.class));
+		CsvWriter csvWriter = null;
+		try {
+			 fos = new FileOutputStream(fileName);
+			 outStream = new DataOutputStream(new BufferedOutputStream(fos));
+			 csvWriter = new CsvWriter(outStream, settings);
+			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		
-		addContactsInProgress(simulationTime);
+		runSimulation(csvWriter);
+		
+		addContactsInProgress(simulationTime, csvWriter);
 		
 		trace.setStartTime(start == Long.MAX_VALUE ? 0 : start);
 		trace.setEndTime(end == Long.MIN_VALUE ? simulationTime * MILLIS_PER_SECOND : end);
@@ -110,7 +132,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	}
 	
 	@Override
-	protected void endContact(int nodeA, int nodeB, double tick) {
+	protected void endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter) {
 		tick *= MILLIS_PER_SECOND;
 		Contact contact = null;
 
@@ -132,6 +154,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			end = (long) tick;
 		}
 
+		csvWriter.processRecord(contact);
 		trace.addContact(contact);
 	}
 	
@@ -139,7 +162,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	 * when the simulation ends, add the contacts which were 
 	 * in progress to the contact list of the trace
 	 */
-	private void addContactsInProgress(long simulationTime) {
+	private void addContactsInProgress(long simulationTime, CsvWriter csvWriter) {
 		for (Contact contact : contactsInProgress) {
 			long endTime = simulationTime * MILLIS_PER_SECOND;
 
@@ -148,6 +171,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			}
 
 			contact.setEnd(endTime);
+			csvWriter.processRecord(contact);
 			trace.addContact(contact);
 		}
 	}

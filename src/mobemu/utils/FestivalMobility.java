@@ -11,6 +11,8 @@ import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import com.univocity.parsers.csv.CsvWriter;
+
 import mobemu.parsers.CellsItem;
 import mobemu.parsers.Host;
 import mobemu.parsers.ChatPair;
@@ -118,7 +120,7 @@ public abstract class FestivalMobility {
 	FestivalMobilityComponent component = null;
     
     protected abstract void startContact(int nodeA, int nodeB, double tick);
-    protected abstract void endContact(int nodeA, int nodeB, double tick);
+    protected abstract void endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter);
     protected abstract void generateInteractionMatrix();
     
     protected void initHosts(Random r) {
@@ -528,7 +530,7 @@ public abstract class FestivalMobility {
                 + (h1.currentY - h2.currentY) * (h1.currentY - h2.currentY));
     }
     
-    public void generateContacts() {
+    public void generateContacts(CsvWriter csvWriter) {
     	double radius;
  
     	for (int i = 0; i < noHosts; i++) {
@@ -560,7 +562,7 @@ public abstract class FestivalMobility {
                               if (simTime != 0) {
                                   // if the hosts has been previously connected, then they must be disconnected
                                   isConnected[i][j] = false;
-                                  endContact(i, j, simTime);
+                                  endContact(i, j, simTime, csvWriter);
                               }
     				}
     			}
@@ -568,7 +570,7 @@ public abstract class FestivalMobility {
     	}
     }
     
-	protected void runSimulation() {
+	protected void runSimulation(CsvWriter csvWriter) {
 		Random rand = new Random(seed);
 		initHosts(rand);
 		initEgdeCellCoords();
@@ -618,7 +620,7 @@ public abstract class FestivalMobility {
         			}
         		}
         	}
-        	generateContacts();        	
+        	generateContacts(csvWriter);        	
         }
         // finish the simulation
         for (int i = 0; i < noHosts; i++) {
