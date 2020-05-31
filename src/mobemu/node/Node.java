@@ -74,6 +74,7 @@ public abstract class Node {
     protected static final int MILLIS_IN_DAY = 1000 * 60 * 60 * 24; // total number of milliseconds in a day
     protected static final int MILLIS_IN_HOUR = 1000 * 60 * 60;
     protected static final int MILLIS_IN_6MIN = 1000 * 60 * 6;
+    protected static final int MILLIS_IN_15MIN = 1000 * 60 * 15;
     
     // Festival scenario
     int groupId;
@@ -198,6 +199,7 @@ public abstract class Node {
         currentDay.setTimeInMillis(startTime);
         int generationHour =  currentDay.get(Calendar.HOUR);
         long chatPairsGenerationTime = MILLIS_IN_6MIN;
+        long socialGenerationTime = 0;
        
         boolean[] inChatPair = new boolean[nodes.length];
         Arrays.fill(inChatPair, false);
@@ -229,11 +231,14 @@ public abstract class Node {
             	chatPairsGenerationTime += MILLIS_IN_6MIN;
             }
 
-            if (currentDay.get(Calendar.HOUR) == generationHour) {
+            // if (currentDay.get(Calendar.HOUR) == generationHour) {
+            if (tick == socialGenerationTime) {
             	messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick,
             					inChatPair, messageRandom));
-            	generationHour++;
-            	System.out.println("Generated a batch of messages at " + currentDay.get(Calendar.HOUR));
+            	// generationHour++;
+            	socialGenerationTime += MILLIS_IN_15MIN;
+            	System.out.println("Generated a batch of messages at " + currentDay.get(Calendar.HOUR) +
+            			":" + currentDay.get(Calendar.MINUTE));
             }
             
             // multithreading?
@@ -247,6 +252,7 @@ public abstract class Node {
 
                     Node observer = nodes[contact.getObserver()];
                     Node observed = nodes[contact.getObserved()];
+                    System.out.println("node1 " + observer + " node2 " + observed);
 
                     long contactDuration = 0;
                     boolean newContact = (contact.getStart() == tick);

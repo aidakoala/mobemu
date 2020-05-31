@@ -403,10 +403,11 @@ public class Message implements Comparable<Message> {
 
     public static List<Message> generateMessages(Node[] nodes, int messageCount, int messageCopies, long tick,
     		boolean[] inChatPair, Random random) {
-    	int nodeCount = nodes.length;
         List<Message> result = new ArrayList<>();
-      
-        for (int i = 0; i < nodeCount; i++) {
+        int nodeCount = (int) (0.25 * nodes.length);
+        
+        while(nodeCount > 0) {
+        	int i = random.nextInt(nodes.length);
         	if (!inChatPair[i]) {
             	// generate messages towards nodes from its social network
         		boolean[] socialNetwork = nodes[i].socialNetwork;
@@ -418,6 +419,7 @@ public class Message implements Comparable<Message> {
         				messageNo--;
         			}
             	}
+        		nodeCount--;
         	}
         }
         
