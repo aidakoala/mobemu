@@ -74,7 +74,7 @@ public abstract class Node {
     protected static final int MILLIS_IN_DAY = 1000 * 60 * 60 * 24; // total number of milliseconds in a day
     protected static final int MILLIS_IN_HOUR = 1000 * 60 * 60;
     protected static final int MILLIS_IN_6MIN = 1000 * 60 * 6;
-    protected static final int MILLIS_IN_15MIN = 1000 * 60 * 15;
+    public static final int MILLIS_IN_15MIN = 1000 * 60 * 15;
     
     // Festival scenario
     int groupId;
@@ -218,6 +218,7 @@ public abstract class Node {
 
             // TODO
             for (Node node : nodes) {
+            	// maybe delete messages who's TTL has expired
                 node.onTick(tick, sampleTime);
             }
 
@@ -481,7 +482,7 @@ public abstract class Node {
         updateContactDuration(encounteredNode.id, sampleTime, tick);
         updateCentrality(timeDelta);
         // Not used in Epidemic
-        // updateTimes(encounteredNode.id, tick);
+        updateTimes(encounteredNode.id, tick);
 
         // do these steps only if the contact just began
         if (newContact) {

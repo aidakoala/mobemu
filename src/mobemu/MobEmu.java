@@ -7,6 +7,8 @@ package mobemu;
 import java.util.*;
 
 import mobemu.algorithms.Epidemic;
+import mobemu.algorithms.SprayAndFocus;
+import mobemu.algorithms.SprayAndWait;
 import mobemu.node.Message;
 import mobemu.node.Node;
 import mobemu.node.Stats;
@@ -41,6 +43,8 @@ public class MobEmu {
 		boolean showRun = false;
 		int groupSize = 5;
 		long startTime = System.nanoTime();
+		// message average size 100kB, buffer capacity 500MB
+		int dataMemory = 5000;
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
 		// dimensiunea spatiului de simulare de 200 pe 200 m,
@@ -127,9 +131,15 @@ public class MobEmu {
 		Host[] hosts = parser.getHosts();
 		for (int i = 0; i < nodes.length; i++) {
 			// System.out.println(i);
-			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
-					altruism);
+//			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
+//					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
+//					altruism);
+			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+					SprayAndWait.Type.SOURCE);
+//			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
+//					Node.MILLIS_IN_15MIN);
 			nodes[i].setGroupId(hosts[i].groupId);
 		}
 		// mark for garbage collection
