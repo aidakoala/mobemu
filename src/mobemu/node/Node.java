@@ -482,7 +482,7 @@ public abstract class Node {
         updateContactDuration(encounteredNode.id, sampleTime, tick);
         updateCentrality(timeDelta);
         // Not used in Epidemic
-        updateTimes(encounteredNode.id, tick);
+       //  updateTimes(encounteredNode.id, tick);
 
         // do these steps only if the contact just began
         if (newContact) {
