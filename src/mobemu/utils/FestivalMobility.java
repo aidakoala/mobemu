@@ -3,7 +3,6 @@ package mobemu.utils;
 import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,7 +13,6 @@ import javax.swing.JTextArea;
 
 import mobemu.parsers.CellsItem;
 import mobemu.parsers.Host;
-import mobemu.parsers.ProbRange;
 import mobemu.parsers.ChatPair;
 
 public abstract class FestivalMobility {
@@ -123,11 +121,10 @@ public abstract class FestivalMobility {
     protected abstract void endContact(int nodeA, int nodeB, double tick);
     protected abstract void generateInteractionMatrix();
     
-    protected void initHosts() {
+    protected void initHosts(Random r) {
     	hosts = new Host[noHosts];
     	for (int i = 0; i < noHosts; i++) {
     		hosts[i] = new Host(BLUETOOTH);
-    		Random r = new Random();
     		hosts[i].speed = minHostSpeed + (maxHostSpeed - minHostSpeed) * r.nextDouble();
     	}
     	numberOfMembers = new int[groupSize];
@@ -285,7 +282,7 @@ public abstract class FestivalMobility {
     	}
     }
     
-    protected void placeGroupsOnGrid() {
+    protected void placeGroupsOnGrid(Random rand) {
     	// compute maximum number of groups allowed in a cell
         // maximum density is of 4 people / m^2
     	int cellArea = (int) (heightCell * widthCell);
@@ -320,7 +317,6 @@ public abstract class FestivalMobility {
         
         // place a group in a cell taking into account crowd density
         int cellIdX, cellIdY;
-        Random rand = new Random(seed);
         for (int i = 0; i < noOfGroups; i++) {
         	 do {
                  cellIdX = rand.nextInt(rows);
@@ -573,9 +569,8 @@ public abstract class FestivalMobility {
     }
     
 	protected void runSimulation() {
-		int x, y;
 		Random rand = new Random(seed);
-		initHosts();
+		initHosts(rand);
 		initEgdeCellCoords();
 		generateInteractionMatrix();
 		
@@ -583,7 +578,7 @@ public abstract class FestivalMobility {
 			setupDisplay();
 		
 		gridSetup();
-		placeGroupsOnGrid();
+		placeGroupsOnGrid(rand);
 		
         for (simTime = 0.0; simTime < totalSimulationTime; simTime += stepInterval) {
         	if (showRun) {
