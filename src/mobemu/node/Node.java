@@ -76,9 +76,6 @@ public abstract class Node {
     protected static final int MILLIS_IN_6MIN = 1000 * 60 * 6;
     public static final int MILLIS_IN_15MIN = 1000 * 60 * 15;
     
-    // Festival scenario
-    int groupId;
-    
     /**
      * Constructor for the {@link Node} class.
      *
@@ -161,10 +158,6 @@ public abstract class Node {
         this.network = new Network();
         this.context = context;
         this.wifiMetrics = new WiFiMetrics(id, traceStart, traceEnd);
-    }
-
-    public void setGroupId(int groupId) {
-    	this.groupId = groupId;
     }
 
     /**

@@ -38,6 +38,9 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			float wifiDirectRadius, double connectionTreshold, float gridHeight, int rows, float gridWidth, int columns, 
 			float travelSpeed, int groupSize, double rewiringProb, double remainingProb, boolean showRun, long sleepTime,
 			int seed, String fileName) {
+		String chatPairsFile = "traces/fmm-festival/chat-pairs.csv";
+		String socialNetworkFile = "traces/fmm-festival/social-network.dat";
+		String traceInfoFile = "traces/fmm-festival/trace-info.txt";
 
 		this.trace = new Trace("FestivalMobility");
 		this.contactsInProgress = new ArrayList<>();
@@ -94,9 +97,11 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		}
 		
 		runSimulation(csvWriter);
-		
-		writeChatPairs();
-		
+
+		writeTraceInfo(traceInfoFile, simulationTime);
+		writeSocialNetwork(socialNetworkFile);
+		writeChatPairs(chatPairsFile);
+
 		addContactsInProgress(simulationTime, csvWriter);
 		
 		trace.setStartTime(start == Long.MAX_VALUE ? 0 : start);
@@ -109,26 +114,71 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			fos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 	
-	public void writeChatPairs() {
+	public void writeTraceInfo(String fileName, long traceEnd) {
+		try {
+			 FileOutputStream fos = new FileOutputStream(fileName);
+			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+			 // write node number
+			 outStream.writeInt(this.noHosts);
+			 outStream.writeUTF("\n");
+			 // write trace start
+			 outStream.writeLong(this.start);
+			 outStream.writeUTF("\n");
+			 // write trace end
+			 outStream.writeLong(traceEnd);
+			 outStream.close();
+			 fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void writeSocialNetwork(String fileName) {
+		try {
+			 FileOutputStream fos = new FileOutputStream(fileName);
+			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+			 for (int i = 0; i < socialNetwork.length; i++) {
+				 for (int j = 0; j < socialNetwork.length; j++) {
+					 outStream.writeBoolean(socialNetwork[i][j]);
+					 if (j != socialNetwork.length - 1)
+						 outStream.writeUTF(",");
+				 }
+				 outStream.writeUTF("\n");
+			 }
+			 outStream.close();
+			 fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+		
+	
+	public void writeChatPairs(String fileName) {
 		CsvWriterSettings settings = new CsvWriterSettings();
 		settings.setSkipEmptyLines(true);
 		settings.setRowWriterProcessor(new BeanWriterProcessor<ChatPair>(ChatPair.class));
 		try {
-			 FileOutputStream fos = new FileOutputStream("traces/fmm-festival/chat-pairs.csv");
+			 FileOutputStream fos = new FileOutputStream(fileName);
 			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
 			 CsvWriter csvWriter = new CsvWriter(outStream, settings);
 			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
 			 csvWriter.writeRows(chatPairs);
 			 csvWriter.close();
+			 outStream.close();
+			 fos.close();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
 	
 	/* 
 	 * sizeX * sizeY have to be a multiple of the groupSize so all the people 

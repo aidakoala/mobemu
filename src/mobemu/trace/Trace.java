@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import mobemu.parsers.ChatPair;
+
 /**
  * Class for representing all the contacts of a mobility trace.
  *
@@ -17,6 +19,7 @@ public class Trace {
 
 	// TODO back to private
     public List<Contact> contacts; // all contacts
+    public List<ChatPair> chatPairs; // all chat pairs
     private String name; // the designated name of the trace
     private long start; // the starting time of the trace
     private long end; // the finish time of the trace
@@ -63,6 +66,10 @@ public class Trace {
     
     public void setContacts(List<Contact> contacts) {
     	this.contacts = contacts;
+    }
+    
+    public void setChatPairs(List<ChatPair> chatPairs) {
+    	this.chatPairs = chatPairs;
     }
     
     public List<Contact> getContacts() {

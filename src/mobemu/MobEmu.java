@@ -127,7 +127,6 @@ public class MobEmu {
 		boolean altruism = false;
 
 		Node[] nodes = new Node[parser.getNodesNumber()];
-		Host[] hosts = parser.getHosts();
 		for (int i = 0; i < nodes.length; i++) {
 //			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
 //					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
@@ -138,11 +137,7 @@ public class MobEmu {
 //			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 //					Node.MILLIS_IN_15MIN);
-			nodes[i].setGroupId(hosts[i].groupId);
 		}
-		// mark for garbage collection
-		parser.hosts = null;
-		groups = parser.getGroups();
 		chatPairs = parser.getChatPairs();
 
 		System.out.println("Generated nodes");
