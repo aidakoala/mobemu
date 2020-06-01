@@ -43,7 +43,7 @@ public class MobEmu {
 		long startTime = System.nanoTime();
 		// message average size 100kB, buffer capacity 500MB
 		int dataMemory = 5000;
-		String fileName = "fmm-contacts-epidemic.csv";
+		String fileName = "fmm-contacts-sprayandwait.csv";
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
 		// dimensiunea spatiului de simulare de 200 pe 200 m,
@@ -129,12 +129,12 @@ public class MobEmu {
 		Node[] nodes = new Node[parser.getNodesNumber()];
 		Host[] hosts = parser.getHosts();
 		for (int i = 0; i < nodes.length; i++) {
-			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
-					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
-					altruism);
-//			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
-//					SprayAndWait.Type.SOURCE);
+//			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
+//					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
+//					altruism);
+			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+					SprayAndWait.Type.SOURCE);
 //			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 //					Node.MILLIS_IN_15MIN);
