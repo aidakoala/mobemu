@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,8 +78,8 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		this.seed = seed;
 	
 		// create a file where to write the contacts for later use
-		FileOutputStream fos;
-		DataOutputStream outStream;
+		FileOutputStream fos = null;
+		DataOutputStream outStream = null;
 		CsvWriterSettings settings = new CsvWriterSettings();
 		settings.setSkipEmptyLines(true);
 		settings.setRowWriterProcessor(new BeanWriterProcessor<Contact>(Contact.class));
@@ -94,12 +95,40 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		
 		runSimulation(csvWriter);
 		
+		writeChatPairs();
+		
 		addContactsInProgress(simulationTime, csvWriter);
 		
 		trace.setStartTime(start == Long.MAX_VALUE ? 0 : start);
 		trace.setEndTime(end == Long.MIN_VALUE ? simulationTime * MILLIS_PER_SECOND : end);
 		trace.setSampleTime(MILLIS_PER_SECOND);
+		
+		csvWriter.close();
+		try {
+			outStream.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
+	
+	public void writeChatPairs() {
+		CsvWriterSettings settings = new CsvWriterSettings();
+		settings.setSkipEmptyLines(true);
+		settings.setRowWriterProcessor(new BeanWriterProcessor<ChatPair>(ChatPair.class));
+		try {
+			 FileOutputStream fos = new FileOutputStream("traces/fmm-festival/chat-pairs.csv");
+			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+			 CsvWriter csvWriter = new CsvWriter(outStream, settings);
+			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
+			 csvWriter.writeRows(chatPairs);
+			 csvWriter.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/* 
 	 * sizeX * sizeY have to be a multiple of the groupSize so all the people 
