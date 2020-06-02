@@ -108,6 +108,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		trace.setEndTime(end == Long.MIN_VALUE ? simulationTime * MILLIS_PER_SECOND : end);
 		trace.setSampleTime(MILLIS_PER_SECOND);
 		
+		csvWriter.flush();
 		csvWriter.close();
 		try {
 			outStream.close();
@@ -150,6 +151,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 				 }
 				 outStream.writeUTF("\n");
 			 }
+			 outStream.flush();
 			 outStream.close();
 			 fos.close();
 		} catch (FileNotFoundException e) {
@@ -174,9 +176,10 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		         LinkedList<ChatPair> groupPairs = chatPairs.get(key);
 		         csvWriter.processRecords(groupPairs);
 		    }
-		     csvWriter.close();
-			 outStream.close();
-			 fos.close();
+		    csvWriter.flush();
+		    csvWriter.close();
+			outStream.close();
+			fos.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
