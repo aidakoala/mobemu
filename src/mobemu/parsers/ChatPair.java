@@ -12,6 +12,10 @@ public class ChatPair {
 	@Parsed(index = 3)
 	public long returnTime;
 	
+	public ChatPair() {
+		
+	}
+	
 	public ChatPair(int nodeAway, int nodeDest, long leaveTime, long returnTime) {
 		this.nodeAway = nodeAway;
 		this.nodeDest = nodeDest;
