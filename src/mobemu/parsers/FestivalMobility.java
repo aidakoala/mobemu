@@ -5,8 +5,10 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -121,22 +123,15 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	
 	public void writeTraceInfo(String fileName, long traceEnd) {
 		try {
-			 FileOutputStream fos = new FileOutputStream(fileName);
-			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-			 // write node number
-			 outStream.writeInt(this.noHosts);
-			 outStream.writeChar('\n');
-			 // write trace start
-			 outStream.writeLong(this.start);
-			 outStream.writeChar('\n');
-			 // write trace end
-			 outStream.writeLong(traceEnd);
-			 outStream.close();
-			 fos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			Writer wr = new FileWriter(fileName);
+			wr.write(this.noHosts);
+			wr.write('\n');
+			wr.write(String.valueOf(this.start));
+			wr.write('\n');
+			wr.write(String.valueOf(traceEnd));
+			wr.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 	
