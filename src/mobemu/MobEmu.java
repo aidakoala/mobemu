@@ -125,12 +125,12 @@ public class MobEmu {
 
 		Node[] nodes = new Node[parser.getNodesNumber()];
 		for (int i = 0; i < nodes.length; i++) {
-			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
-					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
-					altruism);
-//			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
-//					SprayAndWait.Type.BINARY);
+//			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
+//					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
+//					altruism);
+			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+					SprayAndWait.Type.BINARY);
 //			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 //					Node.MILLIS_IN_15MIN);
