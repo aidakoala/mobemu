@@ -93,7 +93,7 @@ public class FMM implements Parser {
 		settings.getFormat().setLineSeparator("\n");
 		settings.setInputBufferSize(16 * 1024);
 		settings.setProcessor(rowProcessor);
-		settings.setHeaderExtractionEnabled(true);
+		// settings.setHeaderExtractionEnabled(true);
 
 		CsvParser parser = new CsvParser(settings);
 		FileInputStream fstream;
@@ -116,7 +116,7 @@ public class FMM implements Parser {
 		settings.getFormat().setLineSeparator("\n");
 		settings.setInputBufferSize(16 * 1024);
 		settings.setProcessor(rowProcessor);
-		settings.setHeaderExtractionEnabled(true);
+		// settings.setHeaderExtractionEnabled(true);
 		
 		CsvParser parser = new CsvParser(settings);
 		FileInputStream fstream;
