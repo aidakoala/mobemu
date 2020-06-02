@@ -95,12 +95,13 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+
+		writeTraceInfo(traceInfoFile, simulationTime);
+		// writeSocialNetwork(socialNetworkFile);
 		
 		runSimulation(csvWriter);
 
-		writeTraceInfo(traceInfoFile, simulationTime);
-		writeSocialNetwork(socialNetworkFile);
-		writeChatPairs(chatPairsFile);
+		// writeChatPairs(chatPairsFile);
 
 		addContactsInProgress(simulationTime, csvWriter);
 		
@@ -124,10 +125,10 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
 			 // write node number
 			 outStream.writeInt(this.noHosts);
-			 outStream.writeUTF("\n");
+			 outStream.writeChar('\n');
 			 // write trace start
 			 outStream.writeLong(this.start);
-			 outStream.writeUTF("\n");
+			 outStream.writeChar('\n');
 			 // write trace end
 			 outStream.writeLong(traceEnd);
 			 outStream.close();
@@ -147,9 +148,9 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 				 for (int j = 0; j < socialNetwork.length; j++) {
 					 outStream.writeBoolean(socialNetwork[i][j]);
 					 if (j != socialNetwork.length - 1)
-						 outStream.writeUTF(",");
+						 outStream.writeChar(',');
 				 }
-				 outStream.writeUTF("\n");
+				 outStream.writeChar('\n');
 			 }
 			 outStream.flush();
 			 outStream.close();
@@ -381,6 +382,8 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 				noFriends--;
 			}
 		}
+		
+		writeSocialNetwork("traces/fmm-festival/social-network.dat");
 	}
 
 }
