@@ -33,7 +33,7 @@ public class FMM implements Parser {
 		this.trace = new Trace("FMM");
 		
 		String prefix = "traces" + File.separator + "fmm-festival" + File.separator;
-		parseFMMTraceInfo(prefix + "tarce-info.txt");
+		parseFMMTraceInfo(prefix + "trace-info.txt");
 		parseFMMContacts(prefix + "contacts.csv");
 		parseFMMChatPairs(prefix + "chat-pairs.csv");
 		parseFMMSocialNetwork(prefix + "social-network.dat");
