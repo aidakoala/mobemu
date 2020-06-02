@@ -99,11 +99,11 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		}
 
 		writeTraceInfo(traceInfoFile, simulationTime);
-		// writeSocialNetwork(socialNetworkFile);
 		
 		runSimulation(csvWriter);
 
-		// writeChatPairs(chatPairsFile);
+		writeSocialNetwork(socialNetworkFile);
+		writeChatPairs(chatPairsFile);
 
 		addContactsInProgress(simulationTime, csvWriter);
 		
@@ -376,7 +376,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			}
 		}
 		
-		writeSocialNetwork("traces/fmm-festival/social-network.dat");
+		// writeSocialNetwork("traces/fmm-festival/social-network.dat");
 	}
 
 }
