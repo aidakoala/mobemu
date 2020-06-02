@@ -136,22 +136,36 @@ public class FMM implements Parser {
 	}
 	
 	public void parseFMMSocialNetwork(String fileName) {
+//		try {
+//			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
+//
+//			for (int i = 0; i < devices; i++) {
+//				String line = rdr.readLine();
+//
+//				String[] parts = line.split(",|\\s+");
+//
+//				for (int j = 0; j < parts.length; j++) {
+//					socialNetwork[i][j] = Boolean.parseBoolean(parts[j]);
+//				}
+//			}
+//			rdr.close();
+//		} catch (IOException | NumberFormatException e) {
+//			System.err.println("FMM Parser exception: " + e.getMessage());
+//		}
 		try {
-			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
-
+			FileInputStream fis = new FileInputStream(fileName);
+			DataInputStream inStream = new DataInputStream(new BufferedInputStream(fis));
 			for (int i = 0; i < devices; i++) {
-				String line = rdr.readLine();
-
-				String[] parts = line.split(",|\\s+");
-
-				for (int j = 0; j < parts.length; j++) {
-					socialNetwork[i][j] = Boolean.parseBoolean(parts[j]);
+				for (int j = 0; j < devices; j++) {
+					socialNetwork[i][j] = inStream.readBoolean();
 				}
 			}
-			rdr.close();
-		} catch (IOException | NumberFormatException e) {
-			System.err.println("FMM Parser exception: " + e.getMessage());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 		
 		System.out.println("CHECK socialNetwork = " + socialNetwork[0][0]);
 	}

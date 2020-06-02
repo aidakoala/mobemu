@@ -142,10 +142,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			 for (int i = 0; i < socialNetwork.length; i++) {
 				 for (int j = 0; j < socialNetwork.length; j++) {
 					 outStream.writeBoolean(socialNetwork[i][j]);
-					 if (j != socialNetwork.length - 1)
-						 outStream.writeChar(',');
 				 }
-				 outStream.writeChar('\n');
 			 }
 			 outStream.flush();
 			 outStream.close();
