@@ -73,23 +73,17 @@ public class FMM implements Parser {
 	}
 	
 	public void parseFMMTraceInfo(String fileName) {
-		try {
-			FileInputStream fis = new FileInputStream(fileName);
-			DataInputStream inStream = new DataInputStream(new BufferedInputStream(fis));
-			
-			this.devices = Integer.parseInt(inStream.readLine());
+		try {		
+			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
+
+			this.devices = Integer.parseInt(rdr.readLine());
 			System.out.println("CHECK nodes = " + this.devices);
-			
-//			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
-//
-//			this.devices = Integer.parseInt(rdr.readLine());
-//			System.out.println("CHECK nodes = " + this.devices);
-//			this.start = Long.parseLong(rdr.readLine());
-//			System.out.println("CHECK tarce start = " + this.start);
-//			this.end = Long.parseLong(rdr.readLine());
-//			System.out.println("CHECK trace end = " + this.end);
-//
-//			rdr.close();
+			this.start = Long.parseLong(rdr.readLine());
+			System.out.println("CHECK tarce start = " + this.start);
+			this.end = Long.parseLong(rdr.readLine());
+			System.out.println("CHECK trace end = " + this.end);
+
+			rdr.close();
 		} catch (IOException | NumberFormatException e) {
 			System.err.println("FMM Trace info Parser exception: " + e.getMessage());
 		}

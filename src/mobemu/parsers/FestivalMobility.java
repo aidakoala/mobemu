@@ -155,6 +155,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			 outStream.flush();
 			 outStream.close();
 			 fos.close();
+			 System.out.println("WRITE SOCIAL NETWORK DONE");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
