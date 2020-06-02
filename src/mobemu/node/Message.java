@@ -455,9 +455,9 @@ public class Message implements Comparable<Message> {
     }
     
     // used for FMM parser
-    public static LinkedList<ChatPair> updateActiveChatPairs(LinkedList<ChatPair> chatPairs,
+    public static ArrayList<ChatPair> updateActiveChatPairs(ArrayList<ChatPair> chatPairs,
     		boolean[] inChatPair, long tick) {
-    	LinkedList<ChatPair> activeChatPairs = new LinkedList<ChatPair>();
+    	ArrayList<ChatPair> activeChatPairs = new ArrayList<ChatPair>();
     	
     	Iterator<ChatPair> it = chatPairs.iterator();
     	while (it.hasNext()) {
@@ -478,7 +478,7 @@ public class Message implements Comparable<Message> {
         return activeChatPairs;	
     }
     
-    public static List<Message> generateMessagesChatPairs(Node[] nodes, LinkedList<ChatPair> activeChatPairs, 
+    public static List<Message> generateMessagesChatPairs(Node[] nodes, ArrayList<ChatPair> activeChatPairs, 
     		int messageCopies, long tick, Random random) {
         List<Message> result = new ArrayList<>();
 

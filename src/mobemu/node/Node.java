@@ -196,7 +196,7 @@ public abstract class Node {
        
         boolean[] inChatPair = new boolean[nodes.length];
         Arrays.fill(inChatPair, false);
-        LinkedList<ChatPair> chatPairs = (LinkedList<ChatPair>) trace.getChatPairs();
+        ArrayList<ChatPair> chatPairs = (ArrayList<ChatPair>) trace.getChatPairs();
 
         for (long tick = startTime; tick < endTime; tick += sampleTime) {
             int count = 0;
@@ -219,7 +219,7 @@ public abstract class Node {
 
             // generate messages between chat pairs
             if (tick == chatPairsGenerationTime)  {
-            	LinkedList<ChatPair> activeChatPairs = Message.updateActiveChatPairs(chatPairs, inChatPair, tick);
+            	ArrayList<ChatPair> activeChatPairs = Message.updateActiveChatPairs(chatPairs, inChatPair, tick);
             	messages.addAll(Message.generateMessagesChatPairs(nodes, activeChatPairs, messageCopies,
             			tick, messageRandom));
             	chatPairsGenerationTime += MILLIS_IN_6MIN;

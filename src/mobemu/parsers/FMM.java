@@ -79,8 +79,11 @@ public class FMM implements Parser {
 			this.devices = Integer.parseInt(rdr.readLine());
 			System.out.println("CHECK nodes = " + this.devices);
 			this.start = Long.parseLong(rdr.readLine());
+			trace.setStartTime(this.start);
 			System.out.println("CHECK tarce start = " + this.start);
 			this.end = Long.parseLong(rdr.readLine());
+			trace.setEndTime(this.end);
+			trace.setSampleTime(MILLIS_PER_SECOND);
 			System.out.println("CHECK trace end = " + this.end);
 
 			rdr.close();
