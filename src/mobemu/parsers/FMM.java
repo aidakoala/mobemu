@@ -1,6 +1,8 @@
 package mobemu.parsers;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -72,16 +74,22 @@ public class FMM implements Parser {
 	
 	public void parseFMMTraceInfo(String fileName) {
 		try {
-			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
-
-			this.devices = Integer.parseInt(rdr.readLine());
+			FileInputStream fis = new FileInputStream(fileName);
+			DataInputStream inStream = new DataInputStream(new BufferedInputStream(fis));
+			
+			this.devices = Integer.parseInt(inStream.readLine());
 			System.out.println("CHECK nodes = " + this.devices);
-			this.start = Long.parseLong(rdr.readLine());
-			System.out.println("CHECK tarce start = " + this.start);
-			this.end = Long.parseLong(rdr.readLine());
-			System.out.println("CHECK trace end = " + this.end);
-
-			rdr.close();
+			
+//			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
+//
+//			this.devices = Integer.parseInt(rdr.readLine());
+//			System.out.println("CHECK nodes = " + this.devices);
+//			this.start = Long.parseLong(rdr.readLine());
+//			System.out.println("CHECK tarce start = " + this.start);
+//			this.end = Long.parseLong(rdr.readLine());
+//			System.out.println("CHECK trace end = " + this.end);
+//
+//			rdr.close();
 		} catch (IOException | NumberFormatException e) {
 			System.err.println("FMM Trace info Parser exception: " + e.getMessage());
 		}
