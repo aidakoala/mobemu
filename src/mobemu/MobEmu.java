@@ -56,8 +56,8 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-		FestivalMobility parser = new FestivalMobility(2 * 3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
-				gridWidth, cols, 1.0f, groupSize, 0.7f, 0.8f, showRun, 10, 0, fileName);
+//		FestivalMobility parser = new FestivalMobility(2 * 3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
+//				gridWidth, cols, 1.0f, groupSize, 0.7f, 0.8f, showRun, 10, 0, fileName);
 //		 Parser parser = new HCMM(2 * 3600, 300, 0f, 0f, 0.1f, gridWidth, gridHeight, 10, 4, 10.0, 0.7,
 //		 		 0.5f, 0.8f, 0, showRun, 10, false);
 		// Parser parser = new SonarFestival();
@@ -98,7 +98,7 @@ public class MobEmu {
 //		System.out.println("start = " + start / Parser.MILLIS_PER_SECOND);
 //		System.out.println("end = " + end / Parser.MILLIS_PER_SECOND);
 		
-//		 Parser parser = new FMM();
+		 Parser parser = new FMM();
 		
 		long estimatedTime = System.nanoTime() - startTime;
 		startTime = System.nanoTime();
