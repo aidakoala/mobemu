@@ -124,11 +124,11 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	public void writeTraceInfo(String fileName, long traceEnd) {
 		try {
 			Writer wr = new FileWriter(fileName);
-			wr.write(this.noHosts);
+			wr.write(String.valueOf(this.noHosts));
 			wr.write('\n');
-			wr.write(String.valueOf(this.start));
+			wr.write(String.valueOf(0 * MILLIS_PER_SECOND));
 			wr.write('\n');
-			wr.write(String.valueOf(traceEnd));
+			wr.write(String.valueOf(traceEnd * MILLIS_PER_SECOND));
 			wr.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
