@@ -667,7 +667,7 @@ public abstract class FestivalMobility {
 				break;
 			}
 		}
-		ChatPair chatPair = new ChatPair(id, peerId, (long)simTime, hosts[id].returnTime);
+		ChatPair chatPair = new ChatPair(id, peerId, (long)simTime, hosts[id].returnTime, true);
 		if (chatPairs.containsKey(hosts[id].groupId)) {
 			chatPairs.get(hosts[id].groupId).add(chatPair);
 		} else {

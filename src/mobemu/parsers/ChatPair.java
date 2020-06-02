@@ -11,9 +11,15 @@ public class ChatPair {
 	public long leaveTime;
 	@Parsed(index = 3)
 	public long returnTime;
-
+	
 	public ChatPair(int nodeAway, int nodeDest, long leaveTime, long returnTime) {
-		super();
+		this.nodeAway = nodeAway;
+		this.nodeDest = nodeDest;
+		this.leaveTime = leaveTime;
+		this.returnTime = returnTime;
+	}
+
+	public ChatPair(int nodeAway, int nodeDest, long leaveTime, long returnTime, boolean convert) {
 		this.nodeAway = nodeAway;
 		this.nodeDest = nodeDest;
 		// convert seconds to milliseconds

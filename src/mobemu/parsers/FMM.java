@@ -83,7 +83,7 @@ public class FMM implements Parser {
 
 			rdr.close();
 		} catch (IOException | NumberFormatException e) {
-			System.err.println("FMM Parser exception: " + e.getMessage());
+			System.err.println("FMM Trace info Parser exception: " + e.getMessage());
 		}
 	}
 	
