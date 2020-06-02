@@ -169,8 +169,12 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
 			 CsvWriter csvWriter = new CsvWriter(outStream, settings);
 			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
-			 csvWriter.processRecords(chatPairs);;
-			 csvWriter.close();
+				
+		    for (Integer key : chatPairs.keySet()) {
+		         LinkedList<ChatPair> groupPairs = chatPairs.get(key);
+		         csvWriter.processRecords(groupPairs);
+		    }
+		     csvWriter.close();
 			 outStream.close();
 			 fos.close();
 		} catch (FileNotFoundException e) {
