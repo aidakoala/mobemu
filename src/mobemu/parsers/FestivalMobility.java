@@ -169,7 +169,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
 			 CsvWriter csvWriter = new CsvWriter(outStream, settings);
 			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
-			 csvWriter.writeRows(chatPairs);
+			 csvWriter.processRecords(chatPairs);;
 			 csvWriter.close();
 			 outStream.close();
 			 fos.close();

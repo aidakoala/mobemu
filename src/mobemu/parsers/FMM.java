@@ -27,7 +27,6 @@ public class FMM implements Parser {
 	private boolean[][] socialNetwork;
 	private long end = Long.MIN_VALUE;
 	private long start = Long.MAX_VALUE;
-	private List<Contact> contactsInProgress;
 	private boolean staticNodes;
 	private int devices;
 	
