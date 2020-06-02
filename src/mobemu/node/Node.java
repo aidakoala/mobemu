@@ -196,7 +196,7 @@ public abstract class Node {
        
         boolean[] inChatPair = new boolean[nodes.length];
         Arrays.fill(inChatPair, false);
-        HashMap<Integer, LinkedList<ChatPair>> chatPairs = MobEmu.chatPairs;
+        LinkedList<ChatPair> chatPairs = (LinkedList<ChatPair>) trace.getChatPairs();
 
         for (long tick = startTime; tick < endTime; tick += sampleTime) {
             int count = 0;

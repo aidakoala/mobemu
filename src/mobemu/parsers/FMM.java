@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.univocity.parsers.common.processor.BeanListProcessor;
@@ -76,8 +75,11 @@ public class FMM implements Parser {
 			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
 
 			this.devices = Integer.parseInt(rdr.readLine());
+			System.out.println("CHECK nodes = " + this.devices);
 			this.start = Long.parseLong(rdr.readLine());
+			System.out.println("CHECK tarce start = " + this.start);
 			this.end = Long.parseLong(rdr.readLine());
+			System.out.println("CHECK trace end = " + this.end);
 
 			rdr.close();
 		} catch (IOException | NumberFormatException e) {
@@ -104,6 +106,8 @@ public class FMM implements Parser {
 			System.err.println("FMM Parser exception: " + e.getMessage());
 			e.printStackTrace();
 		}
+		
+		System.out.println("CHECK contacts = " + trace.getContactAt(0).getObserver());
 	}
 	
 	public void parseFMMChatPairs(String fileName) {
@@ -125,6 +129,8 @@ public class FMM implements Parser {
 			System.err.println("FMM Parser exception: " + e.getMessage());
 			e.printStackTrace();
 		}
+		
+		System.out.println("CHECK chat pair  = " + trace.getChatPairs().get(0).nodeAway);
 	}
 	
 	public void parseFMMSocialNetwork(String fileName) {
@@ -144,6 +150,8 @@ public class FMM implements Parser {
 		} catch (IOException | NumberFormatException e) {
 			System.err.println("FMM Parser exception: " + e.getMessage());
 		}
+		
+		System.out.println("CHECK socialNetwork = " + socialNetwork[0][0]);
 	}
 
 }

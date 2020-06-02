@@ -19,6 +19,7 @@ public class Trace {
 
 	// TODO back to private
     public List<Contact> contacts; // all contacts
+	// useful when working with FMM
     public List<ChatPair> chatPairs; // all chat pairs
     private String name; // the designated name of the trace
     private long start; // the starting time of the trace
@@ -70,6 +71,10 @@ public class Trace {
     
     public void setChatPairs(List<ChatPair> chatPairs) {
     	this.chatPairs = chatPairs;
+    }
+    
+    public List<ChatPair> getChatPairs() {
+    	return this.chatPairs;
     }
     
     public List<Contact> getContacts() {

@@ -16,6 +16,7 @@ import mobemu.parsers.FestivalMobility;
 import mobemu.parsers.Host;
 import mobemu.parsers.SonarFestival;
 import mobemu.parsers.ChatPair;
+import mobemu.parsers.FMM;
 import mobemu.trace.Parser;
 
 class TraceTime {
@@ -29,9 +30,6 @@ class TraceTime {
  * @author Radu
  */
 public class MobEmu {
-	// useful when working with FMM
-	public static int[][] groups;
-	public static HashMap<Integer, LinkedList<ChatPair>> chatPairs;
 
 	public static void main(String[] args) {
 		float gridHeight = 30f;
@@ -58,13 +56,10 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-		FestivalMobility parser = new FestivalMobility(2 * 3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
-				gridWidth, cols, 1.0f, groupSize, 0.7f, 0.8f, showRun, 10, 0, fileName);
+//		FestivalMobility parser = new FestivalMobility(2 * 3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
+//				gridWidth, cols, 1.0f, groupSize, 0.7f, 0.8f, showRun, 10, 0, fileName);
 //		 Parser parser = new HCMM(2 * 3600, 300, 0f, 0f, 0.1f, gridWidth, gridHeight, 10, 4, 10.0, 0.7,
 //		 		 0.5f, 0.8f, 0, showRun, 10, false);
-		// Parser parser = new UPB(UPB.UpbTrace.UPB2012, false);
-		// Parser parser = new Sigcomm();
-		// Parser parser = new UPB(UPB.UpbTrace.UPB2012);
 		// Parser parser = new SonarFestival();
 		
 		// determine start and end time of Sonar Festival trace using threads
@@ -103,6 +98,8 @@ public class MobEmu {
 //		System.out.println("start = " + start / Parser.MILLIS_PER_SECOND);
 //		System.out.println("end = " + end / Parser.MILLIS_PER_SECOND);
 		
+		Parser parser = new FMM();
+		
 		long estimatedTime = System.nanoTime() - startTime;
 		startTime = System.nanoTime();
 		System.out.println("Trace generation duration: " + estimatedTime * 1e-9);
@@ -131,14 +128,13 @@ public class MobEmu {
 //			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
 //					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
 //					altruism);
-			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
-					SprayAndWait.Type.BINARY);
-//			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
-//					Node.MILLIS_IN_15MIN);
+//			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+//					SprayAndWait.Type.BINARY);
+			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
+					Node.MILLIS_IN_15MIN);
 		}
-		chatPairs = parser.getChatPairs();
 
 		System.out.println("Generated nodes");
 			
