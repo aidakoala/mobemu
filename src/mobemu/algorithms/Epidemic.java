@@ -45,7 +45,7 @@ public class Epidemic extends Node {
 
         // does't use timesPerHour to take a forwarding decision
         // mark this field for garbage collection
-        this.timesPerHour = null;
+        // this.timesPerHour = null;
         this.dissemination = dissemination;
         this.altruismAnalysis = altruism;
     }
