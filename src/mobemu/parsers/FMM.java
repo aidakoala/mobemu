@@ -38,10 +38,10 @@ public class FMM implements Parser {
 		parseFMMTraceInfo(prefix + "trace-info.txt");
 		parseFMMContacts(prefix + "contacts.csv");
 		parseFMMChatPairs(prefix + "chat-pairs.csv");
+		this.socialNetwork = new boolean[devices][devices];
 		parseFMMSocialNetwork(prefix + "social-network.dat");
 		
 		this.context = new HashMap<>();
-		this.socialNetwork = new boolean[devices][devices];
 		for (int i = 0; i < devices; i++) {
 			this.context.put(i, new Context(i));
 		}
