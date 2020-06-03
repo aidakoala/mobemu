@@ -31,6 +31,7 @@ public abstract class Node {
     protected WiFiMetrics wifiMetrics; // the current node's WiFi information
     protected Context context; // the node's context
     public boolean[] socialNetwork; // social network of the node
+    public int[] commonFriends;
 
     // information regarding node contacts
     protected Map<Integer, ContactInfo> encounteredNodes; // list of nodes encountered by the current node
@@ -160,6 +161,10 @@ public abstract class Node {
         this.context = context;
         this.wifiMetrics = new WiFiMetrics(id, traceStart, traceEnd);
     }
+    
+    public void setCommonFriends(int[] commonFriends) {
+    	this.commonFriends = commonFriends;
+    }
 
     /**
      * Runs an opportunistic algorithm.
@@ -258,7 +263,7 @@ public abstract class Node {
                     observer.run(observed, tick, contactDuration, newContact, tick - startTime, sampleTime);
                 }
             }
-            System.out.println("contacts so far = " + count);
+            // System.out.println("contacts so far = " + count);
 
             // remove unused contacts.
             for (int i = count - 1; i >= 0; i--) {

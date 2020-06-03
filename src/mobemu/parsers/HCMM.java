@@ -99,6 +99,37 @@ public class HCMM extends mobemu.utils.HCMM implements Parser {
 		computeSocialNetwork();
 		computeContext(devices);
 	}
+	
+	/* constructor for festivals */
+	public HCMM(long simulationTime, long reconfigurationInterval, float minHostSpeed, float maxHostSpeed,
+			float connectionThreshold, float gridWidth, float gridHeight, int rows, int columns,
+			double transmissionRadius, double rewiringProb, double travelersSpeed, double remainingProbability, int seed, boolean showRun, long sleepTime,
+			boolean staticNodes) {
+		super(seed);
+
+		int devices = computeNoHostFestival(gridWidth, gridHeight, rows, columns);
+		// all groups will have 5 members
+		int groupsNumber = devices / 5;
+		// 10% from the device number will correspond to traveler hosts
+		int travelersNumber = (int) (0.1 * devices);
+		
+		System.out.println("devices = " + devices + " communities = " + groupsNumber + " travelers = "
+				+ travelersNumber);
+		
+		trace = new Trace("HCMM");
+		socialNetwork = new boolean[devices][devices];
+		context = new HashMap<>();
+		contactsInProgress = new ArrayList<>();
+		this.staticNodes = staticNodes;
+
+		int nodesCount = staticNodes ? devices - 2 : devices;
+
+		runSimulator(nodesCount, simulationTime, reconfigurationInterval, minHostSpeed, maxHostSpeed,
+				connectionThreshold, gridWidth, gridHeight, rows, columns, transmissionRadius, rewiringProb,
+				groupsNumber, travelersNumber, travelersSpeed, remainingProbability, showRun, sleepTime);
+		computeSocialNetwork();
+		computeContext(devices);
+	}
 
 	@Override
 	public Trace getTraceData() {
@@ -189,6 +220,21 @@ public class HCMM extends mobemu.utils.HCMM implements Parser {
 			trace.addContact(contact);
 		}
 	}
+	
+	public int computeNoHostFestival(float gridWidth, float gridHeight, int rows, int columns) {
+		int hosts = 0;
+		
+		int sizeX = (int) (gridHeight / rows);
+		int sizeY = (int) (gridWidth / columns);
+		
+		int p1 = (int) (rows / 6);
+		int p2 = (int) ((rows - p1) * 2 / 3);
+		int p3 = (int) (rows - p1 - p2);
+		System.out.println("p1 = " + p1 + " p2 = " + p2 + " p3 = " + p3);
+		hosts = (int) ((p1 * 4 + p2 * 3 + p3 * 2) * sizeX * sizeY * columns);
+
+		return hosts;
+	}
 
 	/**
 	 * Configures and runs the simulator.
@@ -234,6 +280,8 @@ public class HCMM extends mobemu.utils.HCMM implements Parser {
 			float maxHostSpeed, float connectionThreshold, float gridWidth, float gridHeight, int rows, int columns,
 			double transmissionRadius, double rewiringProb, int groupsNumber, int travelersNumber,
 			double travelersSpeed, double remainingProbability, boolean showRun, long sleepTime) {
+		
+		
 		setNumHosts(devices);
 		setTotalSimulationTime(simulationTime);
 		setReconfigurationInterval(reconfigurationInterval);
@@ -452,5 +500,11 @@ public class HCMM extends mobemu.utils.HCMM implements Parser {
 		for (int i = 0; i < devices; i++) {
 			context.put(i, new Context(i));
 		}
+	}
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -7,6 +7,8 @@ import java.awt.geom.Ellipse2D;
 
 import javax.swing.JComponent;
 
+import mobemu.parsers.Host;
+
 public class HCMMComponent extends JComponent {
 
 	private static final long serialVersionUID = 1L;
@@ -25,7 +27,7 @@ public class HCMMComponent extends JComponent {
 		Color[] colors = { Color.red, Color.blue, Color.green, Color.orange, Color.cyan, Color.darkGray, Color.yellow,
 				Color.pink, Color.magenta, Color.gray };
 
-		HCMM.Host[] hosts = hcmm.getHosts();
+		Host[] hosts = hcmm.getHosts();
 
 		for (int i = 0; i < hcmm.getNumHosts(); i++) {
 			int x = (int) (hosts[i].currentX * getSize().width / hcmm.getGridWidth());

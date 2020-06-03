@@ -344,4 +344,10 @@ public class NCCU implements Parser {
             return node1 * node2;
         }
     }
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

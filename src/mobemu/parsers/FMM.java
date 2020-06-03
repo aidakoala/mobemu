@@ -26,6 +26,7 @@ public class FMM implements Parser {
 	private Trace trace;
 	private Map<Integer, Context> context;
 	private boolean[][] socialNetwork;
+	public int[][] commonFriends;
 	private long end = Long.MIN_VALUE;
 	private long start = Long.MAX_VALUE;
 	private boolean staticNodes;
@@ -39,7 +40,9 @@ public class FMM implements Parser {
 		parseFMMContacts(prefix + "contacts.csv");
 		parseFMMChatPairs(prefix + "chat-pairs.csv");
 		this.socialNetwork = new boolean[devices][devices];
+		this.commonFriends = new int[devices][devices];
 		parseFMMSocialNetwork(prefix + "social-network.dat");
+		computeCommonFriends();
 		
 		this.context = new HashMap<>();
 		for (int i = 0; i < devices; i++) {
@@ -72,6 +75,26 @@ public class FMM implements Parser {
 		return 0;
 	}
 	
+    public void computeCommonFriends() {
+    	for (int i = 0; i < devices; i++) {
+    		for (int j = 0; j < devices; j++) {
+    			for (int k = 0; k < devices; k++) {
+    				if (k != i && k != j) {
+    					if (socialNetwork[i][k] && socialNetwork[j][k]) {
+    						commonFriends[i][j]++;
+    						commonFriends[j][i]++;
+    					}
+    				}
+    			}
+    		}
+    	}
+    }
+    
+	@Override
+	public int[] getCommonFriends(int id) {
+		return commonFriends[id];
+	}
+
 	public void parseFMMTraceInfo(String fileName) {
 		try {		
 			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
@@ -139,22 +162,6 @@ public class FMM implements Parser {
 	}
 	
 	public void parseFMMSocialNetwork(String fileName) {
-//		try {
-//			BufferedReader rdr = new BufferedReader(new FileReader(fileName));
-//
-//			for (int i = 0; i < devices; i++) {
-//				String line = rdr.readLine();
-//
-//				String[] parts = line.split(",|\\s+");
-//
-//				for (int j = 0; j < parts.length; j++) {
-//					socialNetwork[i][j] = Boolean.parseBoolean(parts[j]);
-//				}
-//			}
-//			rdr.close();
-//		} catch (IOException | NumberFormatException e) {
-//			System.err.println("FMM Parser exception: " + e.getMessage());
-//		}
 		try {
 			FileInputStream fis = new FileInputStream(fileName);
 			DataInputStream inStream = new DataInputStream(new BufferedInputStream(fis));

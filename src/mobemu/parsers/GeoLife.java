@@ -468,4 +468,10 @@ public class GeoLife implements Parser {
             trajectories.add(trajectory);
         }
     }
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

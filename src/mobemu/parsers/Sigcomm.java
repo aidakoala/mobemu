@@ -266,4 +266,10 @@ public class Sigcomm implements Parser {
         trace.setEndTime(end);
         trace.setSampleTime(MILLIS_PER_SECOND);
     }
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

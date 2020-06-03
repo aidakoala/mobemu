@@ -468,4 +468,10 @@ public class Haggle implements Parser {
             }
         }
     }
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

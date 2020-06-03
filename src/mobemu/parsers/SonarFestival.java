@@ -82,4 +82,10 @@ public class SonarFestival implements Parser {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

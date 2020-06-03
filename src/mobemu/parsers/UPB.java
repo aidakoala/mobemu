@@ -642,4 +642,10 @@ public class UPB implements Parser {
 			this.end = end;
 		}
 	}
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -137,6 +137,7 @@ public class MobEmu {
 //					Node.MILLIS_IN_10MIN);
 			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism);
+			nodes[i].setCommonFriends(parser.getCommonFriends(i));
 		}
 
 		System.out.println("Generated nodes");

@@ -153,4 +153,10 @@ public class NUS implements Parser {
             return o.value - this.value;
         }
     }
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

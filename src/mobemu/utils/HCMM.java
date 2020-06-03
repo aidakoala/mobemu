@@ -16,6 +16,10 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import mobemu.parsers.CellsItem;
+import mobemu.parsers.Host;
+import mobemu.parsers.ProbRange;
+
 /**
  *
  * This mobility model is based on the one described in the scientific paper
@@ -184,6 +188,7 @@ public abstract class HCMM {
         hosts = new Host[numHosts];
 
         for (int i = 0; i < numHosts; i++) {
+//        	System.out.println(i);
             hosts[i] = new Host();
         }
 
@@ -324,6 +329,7 @@ public abstract class HCMM {
      */
     private void generateAdjacency(double[][] weightMat, int[][] adjacencyMat,
             double threshold, int arraySize) {
+    	System.out.println("generateAdjacency");
         for (int i = 0; i < arraySize; i++) {
             for (int j = 0; j < arraySize; j++) {
                 if (weightMat[i][j] > threshold) {
@@ -390,6 +396,7 @@ public abstract class HCMM {
      */
     private void initializeWeightArrayInGroups(double[][] weight, int arraySize,
             int numberOfGroups, double probRewiring, double threshold) {
+    	System.out.println("initializeWeightArrayInGroups");
         int[][] currentGroups = new int[arraySize][arraySize];
         int[] currentNumberOfMembers = new int[numberOfGroups];
 
@@ -880,6 +887,8 @@ public abstract class HCMM {
      * Runs the HCCM simulation.
      */
     protected void move() {
+    	System.out.println("move");
+    	
 		long contacts = 0;
 		JFrame frame = null;
 		JTextArea text = null;
@@ -913,7 +922,7 @@ public abstract class HCMM {
 
         for (int i = 0; i < numberOfRows; i++) {
             for (int j = 0; j < numberOfColumns; j++) {
-                cells[i][j] = new CellsItem();
+                cells[i][j] = new CellsItem(i, j);
             }
         }
 
@@ -1040,6 +1049,7 @@ public abstract class HCMM {
 
             // reconfiguration mechanism
             if (simTime == nextReconfigurationTime) {
+            	System.out.println("start sim");
                 for (int i = 0; i < numberOfRows; i++) {
                     for (int j = 0; j < numberOfColumns; j++) {
                         cells[i][j].numberOfHosts = 0;
@@ -1104,40 +1114,75 @@ public abstract class HCMM {
                         initializeWeightArrayInGroups(interaction, numHosts, initialNumberOfGroups, rewiringProb, threshold);
                     }
 
+                    System.out.println("generate adjacency");
                     generateAdjacency(interaction, adjacency, threshold, numHosts);
                 }
 
                 int pointer = 0;
-
-                boolean[][] usedCells = new boolean[numberOfRows][numberOfColumns];
+                
+                int[][] hostsCells = new int[numberOfRows][numberOfColumns];
                 int[][] neighbors = new int[numberOfRows][numberOfColumns];
 
                 for (int i = 0; i < numberOfRows; i++) {
                     for (int j = 0; j < numberOfColumns; j++) {
                         neighbors[i][j] = 0;
-                        usedCells[i][j] = false;
+                    }
+                }
+                
+                // compute maximum number of groups allowed in a cell
+                // maximum density is of 4 people / m^2
+                int maxNoHosts4 = (int) (sideLengthX * sideLengthY * 4.0);
+                int maxNoHosts3 = (int) (sideLengthX * sideLengthY * 3.0);
+                int maxNoHosts2 = (int) (sideLengthX * sideLengthY * 2.0);
+                System.out.println("sideLengthX = " + sideLengthX + " sideLenghtY " + sideLengthY);
+                // System.out.println("maxNoHosts " + maxNoHosts);
+                
+                
+                // crowd density at a concert is not the same in every cell in the map
+                // it mostly depends on the position of the stage
+                int start = 0;
+                int limit = numberOfRows / 6;
+                for (int i = 0; i < limit; i++) {
+                    for (int j = 0; j < numberOfColumns; j++) {
+                        hostsCells[i][j] = maxNoHosts4;
+                    }
+                }
+                start = limit;
+                limit = start + (numberOfRows - limit) * 2 / 3 ;
+                for (int i = start; i < limit; i++) {
+                    for (int j = 0; j < numberOfColumns; j++) {
+                        hostsCells[i][j] = maxNoHosts3;
+                    }
+                }
+                start = limit;
+                for (int i = start; i < numberOfRows; i++) {
+                    for (int j = 0; j < numberOfColumns; j++) {
+                        hostsCells[i][j] = maxNoHosts2;
                     }
                 }
 
                 int allowedNeigh = 1;
                 for (int i = 0; i < numberOfGroups; i++) {
-                    // avoid that 2 groups are assigned to the same cell
-                    //and that they share more than x edges
+                	int noMembers = numberOfMembers[i];
+                   	System.out.println("group id " + i + " noMembers = " + noMembers);
+                	// avoid that 2 groups that share more than x edges
                     int cellIdX;
                     int cellIdY;
-                    boolean neigh;
+                    // boolean neigh;
                     Random rand = new Random(seed);
                     do {
-                        neigh = false;
+                        // neigh = false;
                         cellIdX = rand.nextInt(numberOfRows) + 1;
                         cellIdY = rand.nextInt(numberOfColumns) + 1;
 
-                        if (neighbors[cellIdX - 1][cellIdY - 1] >= allowedNeigh) {
-                            neigh = true;
-                        }
-                    } while (usedCells[cellIdX - 1][cellIdY - 1] || neigh);
+                        System.out.println("x = " + cellIdX + " y = " + cellIdY + 
+                        		" hostCellMem = " +  hostsCells[cellIdX - 1][cellIdY - 1]);
+//                        if (neighbors[cellIdX - 1][cellIdY - 1] >= allowedNeigh) {
+//                            neigh = true;
+//                        }
+                    } while ((hostsCells[cellIdX - 1][cellIdY - 1] - noMembers < 0) /*|| neigh */);
 
-                    usedCells[cellIdX - 1][cellIdY - 1] = true;
+                    hostsCells[cellIdX - 1][cellIdY - 1] -= noMembers;
 
                     if (cellIdX - 1 > 0) {
                         neighbors[cellIdX - 2][cellIdY - 1]++;
@@ -1722,45 +1767,4 @@ public abstract class HCMM {
      */
     protected abstract void endContact(int nodeA, int nodeB, double tick);
 
-    /**
-     * Class representing an HCMM host.
-     */
-    public static class Host {
-
-        public double currentX;
-        public double currentY;
-        double relativeX;
-        double relativeY;
-        double goalRelativeX;
-        double goalRelativeY;
-        double goalCurrentX;
-        double goalCurrentY;
-        double previousGoalX;
-        double previousGoalY;
-        int cellIdX;
-        int cellIdY;
-        double speed;
-        double absSpeed;
-        double af;
-        boolean isATraveler;
-    }
-
-    /**
-     * Class representing an HCMM cell.
-     */
-    private class CellsItem {
-
-        double minX;
-        double minY;
-        int numberOfHosts;
-    }
-
-    /**
-     * Class representing a probability range.
-     */
-    private class ProbRange {
-
-        float min;
-        float max;
-    }
 }

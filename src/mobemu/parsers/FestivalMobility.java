@@ -33,6 +33,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	private long end = Long.MIN_VALUE;
 	private long start = Long.MAX_VALUE;
 	private boolean[][] socialNetwork;
+	public int[][] commonFriends;
 	private List<Contact> contactsInProgress;
 	private Map<Integer, Context> context;
 	
@@ -47,6 +48,8 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		this.trace = new Trace("FestivalMobility");
 		this.contactsInProgress = new ArrayList<>();
 		this.noHosts = computeNoHostFestival(gridHeight, gridWidth, rows, columns);
+		
+		this.commonFriends = new int[noHosts][noHosts];
 		
 		this.context = new HashMap<>();
 		for (int i = 0; i < noHosts; i++) {
@@ -375,8 +378,29 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 				noFriends--;
 			}
 		}
-		
+
 		// writeSocialNetwork("traces/fmm-festival/social-network.dat");
+	}
+    
+	@Override
+    public void computeCommonFriends() {
+    	for (int i = 0; i < noHosts; i++) {
+    		for (int j = 0; j < noHosts; j++) {
+    			for (int k = 0; k < noHosts; k++) {
+    				if (k != i && k != j) {
+    					if (socialNetwork[i][k] && socialNetwork[j][k]) {
+    						commonFriends[i][j]++;
+    						commonFriends[j][i]++;
+    					}
+    				}
+    			}
+    		}
+    	}
+    }
+	
+	@Override
+	public int[] getCommonFriends(int id) {
+		return commonFriends[id];
 	}
 
 }

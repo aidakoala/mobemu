@@ -122,6 +122,7 @@ public abstract class FestivalMobility {
     protected abstract void startContact(int nodeA, int nodeB, double tick);
     protected abstract void endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter);
     protected abstract void generateInteractionMatrix();
+    protected abstract void computeCommonFriends();
     
     protected void initHosts(Random r) {
     	hosts = new Host[noHosts];
@@ -569,12 +570,13 @@ public abstract class FestivalMobility {
     		}
     	}
     }
-    
+        
 	protected void runSimulation(CsvWriter csvWriter) {
 		Random rand = new Random(seed);
 		initHosts(rand);
 		initEgdeCellCoords();
 		generateInteractionMatrix();
+		computeCommonFriends();
 		
 		if (showRun)
 			setupDisplay();

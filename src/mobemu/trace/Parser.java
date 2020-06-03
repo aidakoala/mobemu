@@ -43,6 +43,8 @@ public interface Parser {
 	 * @return a boolean matrix representing the social network
 	 */
 	boolean[][] getSocialNetwork();
+	
+	int[] getCommonFriends(int id);
 
 	/**
 	 * Gets the number of nodes participating in this trace.

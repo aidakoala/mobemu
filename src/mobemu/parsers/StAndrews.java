@@ -159,4 +159,10 @@ public class StAndrews implements Parser {
         trace.setEndTime(end);
         trace.setSampleTime(MILLIS_PER_SECOND * 100);
     }
+
+	@Override
+	public int[] getCommonFriends(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
