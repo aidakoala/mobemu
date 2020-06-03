@@ -104,15 +104,19 @@ public class MySprayAndWait extends Node {
 
         if (message.getCopies(encounteredNode.getId()) == 1) {
             // if the node has a social relationship with the destination, pass the message
-            if (encounteredNode.socialNetwork[message.getDestination()]) {
-           	 	toRemove.add(message);
-                return true;
-            }
+        	if (!encounteredNode.socialNetwork[message.getDestination()]) {
+        		if (this.socialNetwork[message.getDestination()]) {
+        			toRemove.add(message);
+                    return true;
+                 }
+        	}
+          
             
             // if the node has more friends in common with the destination, it is possible
             // to be later attracted to the same cell, so pass the message
             
             // if this node has higher centrality
+
             return false;
         }
 
