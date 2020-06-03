@@ -30,7 +30,7 @@ public abstract class Node {
     protected Network network; // the current node's network information
     protected WiFiMetrics wifiMetrics; // the current node's WiFi information
     protected Context context; // the node's context
-    protected boolean[] socialNetwork; // social network of the node
+    public boolean[] socialNetwork; // social network of the node
 
     // information regarding node contacts
     protected Map<Integer, ContactInfo> encounteredNodes; // list of nodes encountered by the current node
