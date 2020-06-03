@@ -7,6 +7,7 @@ package mobemu;
 import java.util.*;
 
 import mobemu.algorithms.Epidemic;
+import mobemu.algorithms.MySprayAndWait;
 import mobemu.algorithms.SprayAndFocus;
 import mobemu.algorithms.SprayAndWait;
 import mobemu.node.Message;
@@ -131,9 +132,11 @@ public class MobEmu {
 //			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
 //					SprayAndWait.Type.BINARY);
-			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
-					Node.MILLIS_IN_10MIN);
+//			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
+//					Node.MILLIS_IN_10MIN);
+			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism);
 		}
 
 		System.out.println("Generated nodes");
