@@ -32,7 +32,7 @@ public class MySprayAndWait extends Node {
      * {@code false} otherwise
      */
     public MySprayAndWait(int id, int nodes, Context context, boolean[] socialNetwork, int dataMemorySize, int exchangeHistorySize,
-            long seed, long traceStart, long traceEnd, boolean dissemination, boolean altruism, Type type) {
+            long seed, long traceStart, long traceEnd, boolean dissemination, boolean altruism) {
         super(id, nodes, context, socialNetwork, dataMemorySize, exchangeHistorySize, seed, traceStart, traceEnd);
 
         this.dissemination = dissemination;
