@@ -114,10 +114,10 @@ public class MySprayAndWait extends Node {
             
             // if the node has more friends in common with the destination, it is possible
             // to be later attracted to the same cell, so pass the message
-        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
-        		toRemove.add(message);
-        		return true;
-        	}
+//        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+//        		toRemove.add(message);
+//        		return true;
+//        	}
             
             // if this node has higher centrality
 

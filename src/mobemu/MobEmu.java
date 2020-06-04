@@ -99,7 +99,7 @@ public class MobEmu {
 //		System.out.println("start = " + start / Parser.MILLIS_PER_SECOND);
 //		System.out.println("end = " + end / Parser.MILLIS_PER_SECOND);
 		
-		 Parser parser = new FMM();
+		Parser parser = new FMM();
 		
 		long estimatedTime = System.nanoTime() - startTime;
 		startTime = System.nanoTime();
