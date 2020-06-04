@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobemu.algorithms.SprayAndWait.Type;
+import mobemu.node.Centrality;
+import mobemu.node.Centrality.CentralityValue;
 import mobemu.node.Context;
 import mobemu.node.Message;
 import mobemu.node.Node;
@@ -119,7 +121,12 @@ public class MySprayAndWait extends Node {
 //        		return true;
 //        	}
 //            
-            // if this node has higher centrality
+            // if this node has higher global centrality, pass the message
+        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+        			encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+        		toRemove.add(message);
+        		return true;
+        	}
 
             return false;
         }
