@@ -196,7 +196,6 @@ public abstract class Node {
 
         List<Message> messages = new ArrayList<>();
         currentDay.setTimeInMillis(startTime);
-        int generationHour =  currentDay.get(Calendar.HOUR);
         long chatPairsGenerationTime = MILLIS_IN_6MIN;
         long socialGenerationTime = 0;
        
@@ -231,17 +230,14 @@ public abstract class Node {
             	chatPairsGenerationTime += MILLIS_IN_6MIN;
             }
 
-            // if (currentDay.get(Calendar.HOUR) == generationHour) {
             if (tick == socialGenerationTime) {
             	messages.addAll(Message.generateMessages(nodes, messageCount, messageCopies, tick,
             					inChatPair, messageRandom));
-            	// generationHour++;
             	socialGenerationTime += MILLIS_IN_15MIN;
             	System.out.println("Generated a batch of messages at " + currentDay.get(Calendar.HOUR) +
             			":" + currentDay.get(Calendar.MINUTE));
             }
             
-            // multithreading?
             for (int i = 0; i < contactCount; i++) {
                 Contact contact = trace.getContactAt(i);
 

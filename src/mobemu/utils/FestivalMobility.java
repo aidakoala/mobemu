@@ -92,7 +92,7 @@ public abstract class FestivalMobility {
     float[][] CA; // cell attractivity
     boolean eligibleGroup[];
     // useful when generating messages
-    protected HashMap<Integer, LinkedList<ChatPair>> chatPairs = new HashMap<>();
+    protected LinkedList<ChatPair> chatPairs = new LinkedList<>();
     
     // density of people in a crowd mesured in people / m^2
     protected float maxDensity = 4.0f;
@@ -660,14 +660,8 @@ public abstract class FestivalMobility {
 			}
 		}
 		ChatPair chatPair = new ChatPair(id, peerId, (long)simTime, hosts[id].returnTime, true);
-		if (chatPairs.containsKey(hosts[id].groupId)) {
-			chatPairs.get(hosts[id].groupId).add(chatPair);
-		} else {
-			LinkedList<ChatPair> list = new LinkedList<ChatPair>();
-			list.add(chatPair);
-			chatPairs.put(hosts[id].groupId, list);
-		}
-		
+		chatPairs.add(chatPair);
+
 		cells[x][y].numberOfHosts--;
 		cells[hosts[id].cellIdX][hosts[id].cellIdY].numberOfHosts++;
 		target--;

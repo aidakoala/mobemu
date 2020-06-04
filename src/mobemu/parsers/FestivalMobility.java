@@ -164,15 +164,13 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		settings.setSkipEmptyLines(true);
 		settings.setRowWriterProcessor(new BeanWriterProcessor<ChatPair>(ChatPair.class));
 		try {
-			 FileOutputStream fos = new FileOutputStream(fileName);
-			 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-			 CsvWriter csvWriter = new CsvWriter(outStream, settings);
-			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
+			FileOutputStream fos = new FileOutputStream(fileName);
+			DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+			CsvWriter csvWriter = new CsvWriter(outStream, settings);
+			csvWriter.writeHeaders("id1", "id2", "tstart","tend");
 				
-		    for (Integer key : chatPairs.keySet()) {
-		         LinkedList<ChatPair> groupPairs = chatPairs.get(key);
-		         csvWriter.processRecords(groupPairs);
-		    }
+		    csvWriter.processRecords(chatPairs);
+
 		    csvWriter.flush();
 		    csvWriter.close();
 			outStream.close();
@@ -291,7 +289,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		return groupSize;
 	}
 	
-	public HashMap<Integer, LinkedList<ChatPair>> getChatPairs() {
+	public LinkedList<ChatPair> getChatPairs() {
 		return chatPairs;
 	}
 

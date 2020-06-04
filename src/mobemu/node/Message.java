@@ -427,33 +427,6 @@ public class Message implements Comparable<Message> {
         return result;
     }
     
-    // used when generating the contacts at runtime with FestivalMobility parser
-    public static LinkedList<ChatPair> updateActiveChatPairs(HashMap<Integer, LinkedList<ChatPair>> chatPairs,
-    		boolean[] inChatPair, long tick) {
-    	LinkedList<ChatPair> activeChatPairs = new LinkedList<ChatPair>();
-    	
-    	for (Integer key : chatPairs.keySet()) {
-         	LinkedList<ChatPair> groupPairs = chatPairs.get(key);
-         	Iterator<ChatPair> it = groupPairs.iterator();
-         	while (it.hasNext()) {
-         		ChatPair chatPair = it.next();
-         		if (chatPair.returnTime < tick) {
-         			System.out.println("OVER pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
-         			inChatPair[chatPair.nodeAway] = false;
-         			inChatPair[chatPair.nodeDest] = false;
-         			it.remove();
-         		} else if (chatPair.leaveTime < tick) {
-         			System.out.println("ACTIVE pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
-         			inChatPair[chatPair.nodeAway] = true;
-         			inChatPair[chatPair.nodeDest] = true;
-         			activeChatPairs.add(chatPair);
-         		}
-         	}
-    	}
-    	
-    	return activeChatPairs;	
-    }
-    
     // used for FMM parser
     public static ArrayList<ChatPair> updateActiveChatPairs(ArrayList<ChatPair> chatPairs,
     		boolean[] inChatPair, long tick) {
