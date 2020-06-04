@@ -6,6 +6,7 @@ package mobemu.trace;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import mobemu.parsers.ChatPair;
@@ -20,7 +21,7 @@ public class Trace {
 	// TODO back to private
     public List<Contact> contacts; // all contacts
 	// useful when working with FMM
-    public List<ChatPair> chatPairs; // all chat pairs
+    public LinkedList<ChatPair> chatPairs; // all chat pairs
     private String name; // the designated name of the trace
     private long start; // the starting time of the trace
     private long end; // the finish time of the trace
@@ -45,6 +46,7 @@ public class Trace {
     public Trace(String name, long start, long end) {
         this.name = name;
         this.contacts = new ArrayList<>();
+        this.chatPairs = new LinkedList<ChatPair>();
         this.start = start;
         this.end = end;
         this.sampleTime = 1;
@@ -69,11 +71,11 @@ public class Trace {
     	this.contacts = contacts;
     }
     
-    public void setChatPairs(List<ChatPair> chatPairs) {
+    public void setChatPairs(LinkedList<ChatPair> chatPairs) {
     	this.chatPairs = chatPairs;
     }
     
-    public List<ChatPair> getChatPairs() {
+    public LinkedList<ChatPair> getChatPairs() {
     	return this.chatPairs;
     }
     

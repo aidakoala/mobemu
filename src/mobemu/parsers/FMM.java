@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import com.univocity.parsers.common.processor.BeanListProcessor;
@@ -151,7 +152,7 @@ public class FMM implements Parser {
 		try {
 			fstream = new FileInputStream(fileName);
 			parser.parse(new InputStreamReader(fstream));
-			trace.setChatPairs(rowProcessor.getBeans());
+			trace.setChatPairs((LinkedList<ChatPair>) rowProcessor.getBeans());
 			trace.setSampleTime(MILLIS_PER_SECOND);
 		} catch (FileNotFoundException e) {
 			System.err.println("FMM Parser exception: " + e.getMessage());

@@ -2,7 +2,6 @@ package mobemu.utils;
 
 import java.awt.BorderLayout;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -91,8 +90,7 @@ public abstract class FestivalMobility {
     int[] edgeCellY;
     float[][] CA; // cell attractivity
     boolean eligibleGroup[];
-    // useful when generating messages
-    protected LinkedList<ChatPair> chatPairs = new LinkedList<>();
+    LinkedList<ChatPair> chatPairs;
     
     // density of people in a crowd mesured in people / m^2
     protected float maxDensity = 4.0f;
@@ -114,7 +112,7 @@ public abstract class FestivalMobility {
     protected abstract void generateInteractionMatrix();
     protected abstract void computeCommonFriends();
     
-    protected void initHosts(Random r) {
+    protected void initHosts(Random r) {    	
     	hosts = new Host[noHosts];
     	for (int i = 0; i < noHosts; i++) {
     		hosts[i] = new Host(BLUETOOTH);
@@ -561,7 +559,9 @@ public abstract class FestivalMobility {
     	}
     }
         
-	protected void runSimulation(CsvWriter csvWriter) {
+	protected void runSimulation(CsvWriter csvWriter, LinkedList<ChatPair> chatPairs) {
+		this.chatPairs = chatPairs;
+		
 		Random rand = new Random(seed);
 		initHosts(rand);
 		initEgdeCellCoords();

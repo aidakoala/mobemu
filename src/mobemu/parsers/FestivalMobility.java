@@ -103,7 +103,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 
 		writeTraceInfo(traceInfoFile, simulationTime);
 		
-		runSimulation(csvWriter);
+		runSimulation(csvWriter, this.trace.chatPairs);
 
 		writeSocialNetwork(socialNetworkFile);
 		writeChatPairs(chatPairsFile);
@@ -169,7 +169,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			CsvWriter csvWriter = new CsvWriter(outStream, settings);
 			csvWriter.writeHeaders("id1", "id2", "tstart","tend");
 				
-		    csvWriter.processRecords(chatPairs);
+		    csvWriter.processRecords(this.trace.chatPairs);
 
 		    csvWriter.flush();
 		    csvWriter.close();
@@ -287,10 +287,6 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	
 	public int getGroupSize() {
 		return groupSize;
-	}
-	
-	public LinkedList<ChatPair> getChatPairs() {
-		return chatPairs;
 	}
 
 	public Host[] getHosts() {

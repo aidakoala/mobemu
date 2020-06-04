@@ -428,27 +428,25 @@ public class Message implements Comparable<Message> {
     }
     
     // used for FMM parser
-    public static ArrayList<ChatPair> updateActiveChatPairs(ArrayList<ChatPair> chatPairs,
+    public static void updateActiveChatPairs(ArrayList<ChatPair> activeChatPairs, LinkedList<ChatPair> chatPairs,
     		boolean[] inChatPair, long tick) {
-    	ArrayList<ChatPair> activeChatPairs = new ArrayList<ChatPair>();
+    	activeChatPairs.clear();
     	
     	Iterator<ChatPair> it = chatPairs.iterator();
     	while (it.hasNext()) {
     		ChatPair chatPair = it.next();
          	if (chatPair.returnTime < tick) {
-         		// System.out.println("OVER pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
+         		System.out.println("OVER pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
          		inChatPair[chatPair.nodeAway] = false;
          		inChatPair[chatPair.nodeDest] = false;
          		it.remove();
          	} else if (chatPair.leaveTime < tick) {
-         		// System.out.println("ACTIVE pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
+         		System.out.println("ACTIVE pair (" + chatPair.nodeAway + ", " + chatPair.nodeDest + ")");
          		inChatPair[chatPair.nodeAway] = true;
          		inChatPair[chatPair.nodeDest] = true;
          		activeChatPairs.add(chatPair);
          	}
-        }
-    	
-        return activeChatPairs;	
+        }	
     }
     
     public static List<Message> generateMessagesChatPairs(Node[] nodes, ArrayList<ChatPair> activeChatPairs, 
