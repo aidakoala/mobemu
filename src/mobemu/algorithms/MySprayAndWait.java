@@ -122,19 +122,26 @@ public class MySprayAndWait extends Node {
 //        	}
 //            
             // if this node has higher global centrality, pass the message
-        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-        			encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-        		toRemove.add(message);
-        		return true;
-        	}
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//        			encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+//        		toRemove.add(message);
+//        		return true;
+//        	}
 
             return false;
         }
 
         // if the current node doesn't contain the message, it receives half of the copies
         if (!dataMemory.contains(message) && !ownMessages.contains(message)) {
-            message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-            message.setCopies(id, message.getCopies(encounteredId));
+        	 // if this node has higher global centrality, pass copies / 2 messages
+        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+                message.setCopies(id, message.getCopies(encounteredId));
+        	} else {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+                message.setCopies(id, 1);
+        	}
         }
 
         return true;
