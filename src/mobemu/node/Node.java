@@ -179,7 +179,7 @@ public abstract class Node {
      * @return list of messages generated during the trace
      */
     public static List<Message> runTrace(Node[] nodes, Trace trace, boolean batteryComputation, boolean dissemination, long seed) {
-    	// we will assume a festival node generates 10 messages per hour
+    	// generate 2 messages every 15 min
     	int messageCopies = 100;
     	int messageCount = 4;
 

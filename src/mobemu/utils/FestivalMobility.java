@@ -1,8 +1,6 @@
 package mobemu.utils;
 
 import java.awt.BorderLayout;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -45,9 +43,9 @@ public abstract class FestivalMobility {
 	
 	// time spent by a node/community away
 	public static final int EDGE_MIN = 10 * 60; // 10 min
-	public static final int EDGE_MAX = 20 * 60; // 20 min
+	public static final int EDGE_MAX = 15 * 60; // 15 min
 	public static final int FRIENDS_MIN = 10 * 60; // 10 min
-	public static final int FRIENDS_MAX = 30 * 60; // 30 min
+	public static final int FRIENDS_MAX = 20 * 60; // 20 min
 	// TODO future work
 	public static final int NEW_SHOW_MIN = 40 * 60; // 40 min
 	public static final int NEW_SHOW_MAX = 60 * 60; // 1h
@@ -76,13 +74,7 @@ public abstract class FestivalMobility {
 	protected float minHostSpeed;
 	protected float maxHostSpeed;
 	protected float travelerSpeed = 0.5f;
-	
-	protected double rewiringProb;
-	/*  probability of remaining in a non-home cell */
-	protected double remainingProb;
 
-    /* first run of the algorithm */
-    protected boolean firstTime = true;
     /* set to true if the simulation should be shown graphically */
     protected boolean showRun = false;
     protected long sleepTime;
@@ -109,8 +101,6 @@ public abstract class FestivalMobility {
     
     boolean[][] isConnected;
 
-    FileWriter fstream;
-    BufferedWriter out = null;
     protected int seed;
 
     /* Components for the graphical part of the simulation */
@@ -461,7 +451,7 @@ public abstract class FestivalMobility {
     	// place host2 to the left of host1 or to the right, 0.5m away
     	host2.goalCurrentY = host1.currentY + 0.5;
     	if (host2.currentY > cells[x][y].minY + width)
-    		host2.goalCurrentY = host1.currentY + 0.5;
+    		host2.goalCurrentY = host1.currentY - 0.5;
     }
     
     public void moveHosts(long simTime) {
@@ -601,8 +591,8 @@ public abstract class FestivalMobility {
         	
         	// compute next goal for hosts
         	moveHosts((long)simTime);
-        	// according to Zurich festival paper, 20% of the nodes
-        	// are on the move at any given time
+        	// according to Zurich festival paper, 20% of the nodes are on the move at any given time
+        	// our target is to move 5% of the nodes at any time, given the simulation size
         	int target = (int) (noHosts * 0.05);
         	target -= updateTarget();
 
@@ -684,9 +674,7 @@ public abstract class FestivalMobility {
 		
 		return target;
 	}
-	
-	
-	
+
 	public int moveGroup(int id, Random rand, int target) {
 		int x, y, newX = 0, newY = 0;
 		int groupId = hosts[id].groupId;

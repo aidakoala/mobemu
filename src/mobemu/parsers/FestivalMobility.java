@@ -39,8 +39,8 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	
 	public FestivalMobility(long simulationTime, float minHostSpeed, float maxHostSpeed, float bluetoothRadius,
 			float wifiDirectRadius, double connectionTreshold, float gridHeight, int rows, float gridWidth, int columns, 
-			float travelSpeed, int groupSize, double rewiringProb, double remainingProb, boolean showRun, long sleepTime,
-			int seed, String fileName) {
+			float travelSpeed, int groupSize, boolean showRun, long sleepTime, int seed) {
+		String contactsFile = "traces/fmm-festival/contacts.csv";
 		String chatPairsFile = "traces/fmm-festival/chat-pairs.csv";
 		String socialNetworkFile = "traces/fmm-festival/social-network.dat";
 		String traceInfoFile = "traces/fmm-festival/trace-info.txt";
@@ -93,7 +93,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		settings.setRowWriterProcessor(new BeanWriterProcessor<Contact>(Contact.class));
 		CsvWriter csvWriter = null;
 		try {
-			 fos = new FileOutputStream(fileName);
+			 fos = new FileOutputStream(contactsFile);
 			 outStream = new DataOutputStream(new BufferedOutputStream(fos));
 			 csvWriter = new CsvWriter(outStream, settings);
 			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
@@ -301,7 +301,6 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 
 	@Override
 	protected void generateInteractionMatrix() {
-		// parse contacts file
 		CsvParserSettings settings = new CsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
 		settings.setInputBufferSize(1024);
