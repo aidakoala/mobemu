@@ -152,7 +152,7 @@ public class FMM implements Parser {
 		try {
 			fstream = new FileInputStream(fileName);
 			parser.parse(new InputStreamReader(fstream));
-			trace.setChatPairs((LinkedList<ChatPair>) rowProcessor.getBeans());
+			trace.setChatPairs(new LinkedList<ChatPair>(rowProcessor.getBeans()));
 			trace.setSampleTime(MILLIS_PER_SECOND);
 		} catch (FileNotFoundException e) {
 			System.err.println("FMM Parser exception: " + e.getMessage());
