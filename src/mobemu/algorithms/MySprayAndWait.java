@@ -107,12 +107,12 @@ public class MySprayAndWait extends Node {
 
         if (message.getCopies(encounteredNode.getId()) == 1) {
             // if the node has a social relationship with the destination, pass the message
-        	if (!encounteredNode.socialNetwork[message.getDestination()]) {
-        		if (this.socialNetwork[message.getDestination()]) {
-        			toRemove.add(message);
-                    return true;
-                 }
-        	}
+//        	if (!encounteredNode.socialNetwork[message.getDestination()]) {
+//        		if (this.socialNetwork[message.getDestination()]) {
+//        			toRemove.add(message);
+//                    return true;
+//                 }
+//        	}
             
             // if the node has more friends in common with the destination, it is possible
             // to be later attracted to the same cell, so pass the message
@@ -151,8 +151,18 @@ public class MySprayAndWait extends Node {
 //                message.setCopies(id, 1);
 //        	}
         	
-        	message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-            message.setCopies(id, message.getCopies(encounteredId));
+        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
+        	this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+        		message.setCopies(id, message.getCopies(encounteredId));
+        	} else {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+        		message.setCopies(id, 1);
+        	}
+        	
+//        	message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//          message.setCopies(id, message.getCopies(encounteredId));
         }
 
         return true;
