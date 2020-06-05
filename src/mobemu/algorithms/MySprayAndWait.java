@@ -152,15 +152,12 @@ public class MySprayAndWait extends Node {
 //        	}
         	
         	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
-        	this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
         		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
         		message.setCopies(id, message.getCopies(encounteredId));
-        	} else if (!encounteredNode.socialNetwork[message.getDestination()]) {
-        		if (this.socialNetwork[message.getDestination()])  {
-        			message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-        			message.setCopies(id, 1);
-        		}
+        	} else if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+        		message.setCopies(id, 1);
         	} else {
         		return false;
         	}
