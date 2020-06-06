@@ -116,10 +116,10 @@ public class MySprayAndWait extends Node {
             
             // if the node has more friends in common with the destination, it is possible
             // to be later attracted to the same cell, so pass the message
-//        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
-//        		toRemove.add(message);
-//        		return true;
-//        	}
+        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+        		toRemove.add(message);
+        		return true;
+        	}
           
             // if this node has higher global centrality, pass the message
 //        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
@@ -151,19 +151,19 @@ public class MySprayAndWait extends Node {
 //                message.setCopies(id, 1);
 //        	}
         	
-        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-        		message.setCopies(id, message.getCopies(encounteredId));
-        	} else if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-        		message.setCopies(id, 1);
-        	} else {
-        		return false;
-        	}
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//        		message.setCopies(id, message.getCopies(encounteredId));
+//        	} else if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+//        		message.setCopies(id, 1);
+//        	} else {
+//        		return false;
+//        	}
         	
-//        	message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-//          message.setCopies(id, message.getCopies(encounteredId));
+        	message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+        	message.setCopies(id, message.getCopies(encounteredId));
         }
 
         return true;
