@@ -26,7 +26,7 @@ public class KClique implements CommunityDetection {
 
     private final List<Integer> localCommunity; // the local community of the current node
     private final boolean[] familiarSet; // the familiar set of the current node
-    // a local approximation of the Familiar Set of all vertices in its local compunity
+    // a local approximation of the Familiar Set of all vertices in its local community
     private final boolean[][] globalFamiliarSet; // the global familiar set of the current node
     private int contactThreshold; // contact threshold for the K-clique algorithm
     private int communityThreshold; // community threshold for the K-clique algorithm
@@ -56,8 +56,8 @@ public class KClique implements CommunityDetection {
         this.familiarSet = new boolean[nodes];
         this.localCommunity = new ArrayList<>(nodes);
         this.localCommunity.add(id);
-        // this.globalFamiliarSet = new boolean[nodes][nodes];
-        this.globalFamiliarSet = null;
+        this.globalFamiliarSet = new boolean[nodes][nodes];
+        // this.globalFamiliarSet = null;
         this.contactThreshold = contactThreshold;
         this.communityThreshold = communityThreshold;
     }
@@ -83,12 +83,12 @@ public class KClique implements CommunityDetection {
     @Override
     public void onContact(Node encounteredNode, long tick, long sampleTime) {
         // update the global familiar set of the current node
-        // updateFamiliarSet(encounteredNode, true);
+        updateFamiliarSet(encounteredNode, true);
 
         // step 4 of the K-clique algorithm
-//        if (!inFamiliarSet(encounteredNode.getId())) {
-//            updateFamiliarSet(encounteredNode, false);
-//        }
+        if (!inFamiliarSet(encounteredNode.getId())) {
+            updateFamiliarSet(encounteredNode, false);
+        }
 
         // step 5 of the K-clique algorithm
         if (!inLocalCommunity(encounteredNode.getId())) {
@@ -96,9 +96,9 @@ public class KClique implements CommunityDetection {
         }
 
         // step 6 of the K-clique algorithm
-//        if (inLocalCommunity(encounteredNode.getId())) {
-//            updateLocalCommunityAggressive(encounteredNode);
-//        }
+        if (inLocalCommunity(encounteredNode.getId())) {
+            updateLocalCommunityAggressive(encounteredNode);
+        }
     }
 
     /**

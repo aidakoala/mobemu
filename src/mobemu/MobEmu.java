@@ -6,6 +6,7 @@ package mobemu;
 
 import java.util.*;
 
+import mobemu.algorithms.BubbleRap;
 import mobemu.algorithms.Epidemic;
 import mobemu.algorithms.MySprayAndWait;
 import mobemu.algorithms.SprayAndFocus;
@@ -134,9 +135,11 @@ public class MobEmu {
 //			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 //					Node.MILLIS_IN_10MIN);
-			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism);
-			nodes[i].setCommonFriends(parser.getCommonFriends(i));
+			nodes[i] = new BubbleRap(i, nodes.length,  parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime());
+//			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism);
+//			nodes[i].setCommonFriends(parser.getCommonFriends(i));
 		}
 
 		System.out.println("Generated nodes");
