@@ -135,8 +135,8 @@ public class MobEmu {
 			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 					Node.MILLIS_IN_15MIN);
-			nodes[i] = new BubbleRap(i, nodes.length,  parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime());
+//			nodes[i] = new BubbleRap(i, nodes.length,  parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime());
 //			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism);
 //			nodes[i].setCommonFriends(parser.getCommonFriends(i));
