@@ -39,11 +39,11 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	
 	public FestivalMobility(long simulationTime, float minHostSpeed, float maxHostSpeed, float bluetoothRadius,
 			float wifiDirectRadius, double connectionTreshold, float gridHeight, int rows, float gridWidth, int columns, 
-			float travelSpeed, int groupSize, boolean showRun, long sleepTime, int seed) {
-		String contactsFile = "traces/fmm-festival/contacts.csv";
-		String chatPairsFile = "traces/fmm-festival/chat-pairs.csv";
-		String socialNetworkFile = "traces/fmm-festival/social-network.dat";
-		String traceInfoFile = "traces/fmm-festival/trace-info.txt";
+			float travelSpeed, int groupSize, boolean showRun, long sleepTime, int seed, String dirName) {
+		String contactsFile = "traces/fmm-festival/" + dirName + "/contacts.csv";
+		String chatPairsFile = "traces/fmm-festival/" + dirName + "/chat-pairs.csv";
+		String socialNetworkFile = "traces/fmm-festival/" + dirName + "/social-network.dat";
+		String traceInfoFile = "traces/fmm-festival/" + dirName + "/trace-info.txt";
 
 		this.trace = new Trace("FestivalMobility");
 		this.contactsInProgress = new ArrayList<>();

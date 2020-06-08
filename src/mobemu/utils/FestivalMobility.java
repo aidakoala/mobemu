@@ -120,6 +120,14 @@ public abstract class FestivalMobility {
     	}
     	numberOfMembers = new int[groupSize];
     	
+    	// 10% of hosts chosen randomly will use WiFi Direct to communicate
+    	int wifiDHosts = (int) (0.1 * noHosts);
+    	while (wifiDHosts > 0) {
+    		int id = r.nextInt(noHosts);
+    		hosts[id].protocol = BOTH;
+    		wifiDHosts--;
+    	}
+    	
     	travelers = new Host[noOfTravelers];
     	for (int i = 0; i < noOfTravelers; i++) {
     		travelers[i] = new Host(BLUETOOTH);
@@ -525,8 +533,8 @@ public abstract class FestivalMobility {
     	for (int i = 0; i < noHosts; i++) {
     		for (int j = 0; j < noHosts; j++) {
     			if (i != j) {
-    				if (hosts[i].protocol != hosts[j].protocol)
-    					continue;
+//    				if (hosts[i].protocol != hosts[j].protocol)
+//    					continue;
     				switch (hosts[i].protocol) {
 					case 0:
 						radius = FestivalMobility.BLUETOOTH_RADIUS;

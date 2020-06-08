@@ -43,6 +43,7 @@ public class MobEmu {
 		long startTime = System.nanoTime();
 		// message average size 100kB, buffer capacity 500MB
 		int dataMemory = 5000;
+		String dirName = "wifid-bluetooth";
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
 		// dimensiunea spatiului de simulare de 200 pe 200 m,
@@ -57,8 +58,8 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-//		FestivalMobility parser = new FestivalMobility(3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
-//				gridWidth, cols, 1.0f, groupSize, showRun, 10, 0);
+		FestivalMobility parser = new FestivalMobility(3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
+				gridWidth, cols, 1.0f, groupSize, showRun, 10, 0, dirName);
 //		 Parser parser = new HCMM(2 * 3600, 300, 0f, 0f, 0.1f, gridWidth, gridHeight, 10, 4, 10.0, 0.7,
 //		 		 0.5f, 0.8f, 0, showRun, 10, false);
 		// Parser parser = new SonarFestival();
@@ -99,7 +100,7 @@ public class MobEmu {
 //		System.out.println("start = " + start / Parser.MILLIS_PER_SECOND);
 //		System.out.println("end = " + end / Parser.MILLIS_PER_SECOND);
 		
-		Parser parser = new FMM();
+//		Parser parser = new FMM();
 		
 		long estimatedTime = System.nanoTime() - startTime;
 		startTime = System.nanoTime();
@@ -129,14 +130,14 @@ public class MobEmu {
 //			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
 //					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
 //					altruism);
-//			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
-//					SprayAndWait.Type.SOURCE);
+			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+					SprayAndWait.Type.BINARY);
 //			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 //					Node.MILLIS_IN_15MIN);
-			nodes[i] = new BubbleRap(i, nodes.length,  parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime());
+//			nodes[i] = new BubbleRap(i, nodes.length,  parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime());
 //			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
 //					Node.MILLIS_IN_15MIN);

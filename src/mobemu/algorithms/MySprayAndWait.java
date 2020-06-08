@@ -142,28 +142,28 @@ public class MySprayAndWait extends Node {
 //        	}
         	
             // compute the last time each of the two nodes encountered the message's destination
-            long timeDestinationSeen = Long.MIN_VALUE;
-            long timeDestinationSeenEncountered = Long.MIN_VALUE;
-
-            ContactInfo info = encounteredNodes.get(message.getDestination());
-            if (info != null) {
-                timeDestinationSeen = info.getLastEncounterTime();
-            }
-
-            info = encounteredNode.encounteredNodes.get(message.getDestination());
-            if (info != null) {
-                timeDestinationSeenEncountered = info.getLastEncounterTime();
-            }
-
-            // if the node that doesn't have the message is the better one (has met
-            // the destination more recently plus delta), transfer the message
-            // THESE ARE TIMESTAMPS!!! The paper suggests using timers increment by 1 per
-            // clock tick
-            if (timeDestinationSeen > timeDestinationSeenEncountered + delta) {
-                //encounteredNode.removeMessage(message, fromDataMemory);
-                toRemove.add(message);
-                return true;
-            }
+//            long timeDestinationSeen = Long.MIN_VALUE;
+//            long timeDestinationSeenEncountered = Long.MIN_VALUE;
+//
+//            ContactInfo info = encounteredNodes.get(message.getDestination());
+//            if (info != null) {
+//                timeDestinationSeen = info.getLastEncounterTime();
+//            }
+//
+//            info = encounteredNode.encounteredNodes.get(message.getDestination());
+//            if (info != null) {
+//                timeDestinationSeenEncountered = info.getLastEncounterTime();
+//            }
+//
+//            // if the node that doesn't have the message is the better one (has met
+//            // the destination more recently plus delta), transfer the message
+//            // THESE ARE TIMESTAMPS!!! The paper suggests using timers increment by 1 per
+//            // clock tick
+//            if (timeDestinationSeen > timeDestinationSeenEncountered + delta) {
+//                //encounteredNode.removeMessage(message, fromDataMemory);
+//                toRemove.add(message);
+//                return true;
+//            }
 
 
             return false;
@@ -172,14 +172,14 @@ public class MySprayAndWait extends Node {
         // if the current node doesn't contain the message, it receives half of the copies
         if (!dataMemory.contains(message) && !ownMessages.contains(message)) {
         	 // if this node has higher global centrality, pass copies / 2 messages
-        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-                message.setCopies(id, message.getCopies(encounteredId));
-        	} else {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-                message.setCopies(id, 1);
-        	}
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//                message.setCopies(id, message.getCopies(encounteredId));
+//        	} else {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+//                message.setCopies(id, 1);
+//        	}
         	
 //        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
 //        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
@@ -189,16 +189,15 @@ public class MySprayAndWait extends Node {
 //                message.setCopies(id, 1);
 //        	}
         	
-//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-//        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-//        		message.setCopies(id, message.getCopies(encounteredId));
-//        	} else if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
-//        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-//        		message.setCopies(id, 1);
-//        	} else {
-//        		return false;
-//        	}
+        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+        		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
+        		this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+        		message.setCopies(id, message.getCopies(encounteredId));
+        	} else {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+        		message.setCopies(id, 1);
+        	}
         	
 //        	message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
 //        	message.setCopies(id, message.getCopies(encounteredId));
