@@ -119,68 +119,22 @@ public class MySprayAndWait extends Node {
     	int dest = message.getDestination();
 
         if (message.getCopies(encounteredNode.getId()) == 1) {
-            // if the node has a social relationship with the destination, pass the message
-//        	if (!encounteredNode.socialNetwork[message.getDestination()]) {
-//        		if (this.socialNetwork[message.getDestination()]) {
-//        			toRemove.add(message);
-//                    return true;
-//                 }
-//        	}
-            
-            // if the node has more friends in common with the destination, it is possible
-            // to be later attracted to the same cell, so pass the message
-//        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
-//        		toRemove.add(message);
-//        		return true;
-//        	}
-//          
-            // if this node has higher global centrality, pass the message
-//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-//        			encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-//        		toRemove.add(message);
-//        		return true;
-//        	}
-        	
-            // compute the last time each of the two nodes encountered the message's destination
-//            long timeDestinationSeen = Long.MIN_VALUE;
-//            long timeDestinationSeenEncountered = Long.MIN_VALUE;
-//
-//            ContactInfo info = encounteredNodes.get(message.getDestination());
-//            if (info != null) {
-//                timeDestinationSeen = info.getLastEncounterTime();
-//            }
-//
-//            info = encounteredNode.encounteredNodes.get(message.getDestination());
-//            if (info != null) {
-//                timeDestinationSeenEncountered = info.getLastEncounterTime();
-//            }
-//
-//            // if the node that doesn't have the message is the better one (has met
-//            // the destination more recently plus delta), transfer the message
-//            // THESE ARE TIMESTAMPS!!! The paper suggests using timers increment by 1 per
-//            // clock tick
-//            if (timeDestinationSeen > timeDestinationSeenEncountered + delta) {
-//                //encounteredNode.removeMessage(message, fromDataMemory);
-//                toRemove.add(message);
-//                return true;
-//            }
-
-
             return false;
         }
 
         // if the current node doesn't contain the message, it receives half of the copies
         if (!dataMemory.contains(message) && !ownMessages.contains(message)) {
-        	 // if this node has higher global centrality, pass copies / 2 messages
-//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-//        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-//                message.setCopies(id, message.getCopies(encounteredId));
-//        	} else {
-//        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-//                message.setCopies(id, 1);
-//        	}
+        	// SW4 if this node has higher global centrality, pass copies / 2 messages
+        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+                message.setCopies(id, message.getCopies(encounteredId));
+        	} else {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+                message.setCopies(id, 1);
+        	}
         	
+        	// SW 5
 //        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
 //        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
 //                message.setCopies(id, message.getCopies(encounteredId));
@@ -189,16 +143,45 @@ public class MySprayAndWait extends Node {
 //                message.setCopies(id, 1);
 //        	}
         	
-        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-        		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
-        		this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-        		message.setCopies(id, message.getCopies(encounteredId));
-        	} else {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-        		message.setCopies(id, 1);
-        	}
+        	// SW 4 || 5
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//        		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
+//        		this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//        		message.setCopies(id, message.getCopies(encounteredId));
+//        	} else {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+//        		message.setCopies(id, 1);
+//        	}
         	
+        	// SW 6 = SW 4 && 5
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//    		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) &&
+//    		this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//        		message.setCopies(id, message.getCopies(encounteredId));
+//        	} else if (!encounteredNode.socialNetwork[dest]){
+//        		if (this.socialNetwork[dest]) {
+//            		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+//            		message.setCopies(id, 1);
+//        		}
+//        	} else {
+//        		return false;
+//        	}
+
+        	// SW 7
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//    		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//        		message.setCopies(id, message.getCopies(encounteredId));
+//        	} else if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]){
+//            	message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+//            	message.setCopies(id, 1);
+//        	} else {
+//        		return false;
+//        	}
+
+        	// SW binary
 //        	message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
 //        	message.setCopies(id, message.getCopies(encounteredId));
         }
