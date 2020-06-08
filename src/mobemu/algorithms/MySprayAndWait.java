@@ -135,13 +135,13 @@ public class MySprayAndWait extends Node {
 //        	}
         	
         	// SW 5
-        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-                message.setCopies(id, message.getCopies(encounteredId));
-        	} else {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-                message.setCopies(id, 1);
-        	}
+//        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//                message.setCopies(id, message.getCopies(encounteredId));
+//        	} else {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+//                message.setCopies(id, 1);
+//        	}
         	
         	// SW 4 || 5
 //        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
@@ -170,16 +170,16 @@ public class MySprayAndWait extends Node {
 //        	}
 
         	// SW 7
-//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-//    		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-//        		message.setCopies(id, message.getCopies(encounteredId));
-//        	} else if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]){
-//            	message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-//            	message.setCopies(id, 1);
-//        	} else {
-//        		return false;
-//        	}
+        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+    		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+        		message.setCopies(id, message.getCopies(encounteredId));
+        	} else if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]){
+            	message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+            	message.setCopies(id, 1);
+        	} else {
+        		return false;
+        	}
 
         	// SW binary
 //        	message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
