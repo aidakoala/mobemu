@@ -125,23 +125,23 @@ public class MySprayAndWait extends Node {
         // if the current node doesn't contain the message, it receives half of the copies
         if (!dataMemory.contains(message) && !ownMessages.contains(message)) {
         	// SW4 if this node has higher global centrality, pass copies / 2 messages
-        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
-                message.setCopies(id, message.getCopies(encounteredId));
-        	} else {
-        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
-                message.setCopies(id, 1);
-        	}
-        	
-        	// SW 5
-//        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//        	encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT)) {
 //        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
 //                message.setCopies(id, message.getCopies(encounteredId));
 //        	} else {
 //        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
 //                message.setCopies(id, 1);
 //        	}
+        	
+        	// SW 5
+        	if (this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+                message.setCopies(id, message.getCopies(encounteredId));
+        	} else {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+                message.setCopies(id, 1);
+        	}
         	
         	// SW 4 || 5
 //        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
