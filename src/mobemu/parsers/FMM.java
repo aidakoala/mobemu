@@ -33,10 +33,10 @@ public class FMM implements Parser {
 	private boolean staticNodes;
 	private int devices;
 	
-	public FMM() {
+	public FMM(String dirName) {
 		this.trace = new Trace("FMM");
 		
-		String prefix = "traces" + File.separator + "fmm-festival" + File.separator;
+		String prefix = "traces" + File.separator + "fmm-festival" + File.separator + dirName + File.separator;
 		parseFMMTraceInfo(prefix + "trace-info.txt");
 		parseFMMContacts(prefix + "contacts.csv");
 		parseFMMChatPairs(prefix + "chat-pairs.csv");
