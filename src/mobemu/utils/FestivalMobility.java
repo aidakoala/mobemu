@@ -115,18 +115,18 @@ public abstract class FestivalMobility {
     protected void initHosts(Random r) {    	
     	hosts = new Host[noHosts];
     	for (int i = 0; i < noHosts; i++) {
-    		hosts[i] = new Host(BLUETOOTH);
+    		hosts[i] = new Host(WIFIDIRECT);
     		hosts[i].speed = minHostSpeed + (maxHostSpeed - minHostSpeed) * r.nextDouble();
     	}
     	numberOfMembers = new int[groupSize];
     	
     	// 10% of hosts chosen randomly will use WiFi Direct to communicate
-    	int wifiDHosts = (int) (0.1 * noHosts);
-    	while (wifiDHosts > 0) {
-    		int id = r.nextInt(noHosts);
-    		hosts[id].protocol = BOTH;
-    		wifiDHosts--;
-    	}
+//    	int wifiDHosts = (int) (0.1 * noHosts);
+//    	while (wifiDHosts > 0) {
+//    		int id = r.nextInt(noHosts);
+//    		hosts[id].protocol = BOTH;
+//    		wifiDHosts--;
+//    	}
     	
     	travelers = new Host[noOfTravelers];
     	for (int i = 0; i < noOfTravelers; i++) {
