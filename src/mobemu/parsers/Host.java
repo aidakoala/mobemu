@@ -1,5 +1,9 @@
 package mobemu.parsers;
 
+
+import java.util.LinkedList;
+
+import mobemu.node.Node;
 import mobemu.utils.FestivalMobility;
 
 /**
@@ -24,25 +28,42 @@ public class Host {
     public int protocol;
     public int maxPeers;
     public int groupId;
+    public int id;
+    
+    public int currentAP;
+    public int lastAP;
+    public long wifiDTime;
     
     public int movementType;
     public long returnTime; // the time this node will return to its community
     
     public Host() {}
     
-    public Host(int protocol) {
+    public Host(int protocol, int id) {
+    	this.id = id;
     	this.protocol = protocol;
     	this.movementType = -1;
     	this.returnTime = -1;
-    	switch (protocol) {
-    	case FestivalMobility.BLUETOOTH:
-    		maxPeers = FestivalMobility.MAX_PEERS_BT;
-    		break;
-    	case FestivalMobility.WIFIDIRECT:
-    		maxPeers = FestivalMobility.MAX_PEERS_WD;
-    		break;
-    	default:
-    		maxPeers = FestivalMobility.MAX_PEERS_WD;
-    	}
+
+    	// wifi direct trace
+    	this.lastAP = -1;
+    	this.currentAP = -1;
+    	this.wifiDTime = Node.MILLIS_IN_1MIN;
+    	
+//    	switch (protocol) {
+//    	case FestivalMobility.BLUETOOTH:
+//    		maxPeers = FestivalMobility.MAX_PEERS_BT;
+//    		break;
+//    	case FestivalMobility.WIFIDIRECT:
+//    		maxPeers = FestivalMobility.MAX_PEERS_WD;
+//    		break;
+//    	default:
+//    		maxPeers = FestivalMobility.MAX_PEERS_WD;
+//    	}
+    }
+    
+    public void resetWifiParams() {
+    	this.currentAP = -1;
+    	this.wifiDTime = Node.MILLIS_IN_1MIN;
     }
 }
