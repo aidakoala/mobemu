@@ -606,7 +606,7 @@ public abstract class FestivalMobility {
     	    }
     	    	
     	    int newContacts = MAX_PEERS_WD - ap.clients.size();
-    	    System.out.println("AP id = " + ap.id + "current clients = " + ap.clients.size());
+    	    // System.out.println("AP id = " + ap.id + "current clients = " + ap.clients.size());
     	    for (int i = 0; (i < noHosts) && (newContacts > 0); i++) {
     			if (i == ap.id)
     				continue;
@@ -637,7 +637,9 @@ public abstract class FestivalMobility {
             				hosts[i].lastAP = ap.id;
                             endContact(ap.id, i, simTime, csvWriter);
                             // remove from client list
+                            System.out.println("list size = " + ap.clients.size());
                             ap.clients.remove(hosts[i]);
+                            System.out.println("list size = " + ap.clients.size());
                         }
     			}
     		}
@@ -768,6 +770,7 @@ public abstract class FestivalMobility {
 		
 		// the node will use WiFi Direct
 		this.wifiDirectAPs.put(id, new WifiDirectGO(id));
+		System.out.println("id " + id + " is AP");
 		// the other nodes will not consider this node for bluetooth contacts
 		hosts[id].protocol = -1;
 		
