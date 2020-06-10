@@ -553,39 +553,39 @@ public abstract class FestivalMobility {
     public void generateContactsWifiDirect(WifiDirectGO ap, CsvWriter csvWriter) {
     	float radius = FestivalMobility.BLUETOOTH_RADIUS;
     	
-    	if (ap.isBreakTime) {
-    		ap.breakTime--;
-    		// if the break is over
-    		if (ap.breakTime == 0) {
-    			ap.resetTimers();
-    			
-    			for (int i = 0; i < noHosts; i++) {
-    				if (i == ap.id)
-    					continue;
-    				// a host can be connected to only one access point in legacy mode
-    				if (hosts[i].currentAP != -1)
-    					continue;
-    				
-    				double currentDist = getDistance(hosts[ap.id], hosts[i]);
-    				if (currentDist < radius) {
-    					isConnected[ap.id][i] = true;
-                            
-    					hosts[i].currentAP = ap.id;
-    					hosts[i].wifiDTime = Node.MILLIS_IN_1MIN;
-                        ap.clients.add(hosts[i]);
-                            
-                        startContact(ap.id, i, simTime);
-                        contacts++;
-                     }
-    			}
-    		}
-    	} else {
-    		ap.groupTimeout--;
-    		if (ap.groupTimeout == 0) {
-    			disconnectAPClients(ap.id);
-    			ap.isBreakTime = true;
-    			return;
-    		}
+//    	if (ap.isBreakTime) {
+//    		ap.breakTime--;
+//    		// if the break is over
+//    		if (ap.breakTime == 0) {
+//    			ap.resetTimers();
+//    			
+//    			for (int i = 0; i < noHosts; i++) {
+//    				if (i == ap.id)
+//    					continue;
+//    				// a host can be connected to only one access point in legacy mode
+//    				if (hosts[i].currentAP != -1)
+//    					continue;
+//    				
+//    				double currentDist = getDistance(hosts[ap.id], hosts[i]);
+//    				if (currentDist < radius) {
+//    					isConnected[ap.id][i] = true;
+//                            
+//    					hosts[i].currentAP = ap.id;
+//    					hosts[i].wifiDTime = Node.MILLIS_IN_1MIN;
+//                        ap.clients.add(hosts[i]);
+//                            
+//                        startContact(ap.id, i, simTime);
+//                        contacts++;
+//                     }
+//    			}
+//    		}
+//    	} else {
+//    		ap.groupTimeout--;
+//    		if (ap.groupTimeout == 0) {
+//    			disconnectAPClients(ap.id);
+//    			ap.isBreakTime = true;
+//    			return;
+//    		}
     		
     		// see what hosts should be disconnected
     		Iterator<Host> it = ap.clients.iterator();
@@ -637,7 +637,7 @@ public abstract class FestivalMobility {
                         }
     			}
     		}
-    	}	
+//    	}	
     }
     
     public void generateContacts(CsvWriter csvWriter) {
