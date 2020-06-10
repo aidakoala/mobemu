@@ -28,7 +28,7 @@ public abstract class FestivalMobility {
 
 	// TODO future work
 	public static final int MAX_PEERS_BT = 7;
-	public static final int MAX_PEERS_WD = 30;
+	public static final int MAX_PEERS_WD = 254;
 	
 	// types of movement
 	// assuming the shows start on the hour, the communities will be able
