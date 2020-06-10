@@ -603,6 +603,7 @@ public abstract class FestivalMobility {
     	    }
     	    	
     	    int newContacts = MAX_PEERS_WD - ap.clients.size();
+    	    System.out.println("AP id = " + ap.id + "current clients = " + ap.clients.size());
     	    for (int i = 0; (i < noHosts) && (newContacts > 0); i++) {
     			if (i == ap.id)
     				continue;
