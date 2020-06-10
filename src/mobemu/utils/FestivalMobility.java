@@ -26,6 +26,8 @@ public abstract class FestivalMobility {
 	public static final float BLUETOOTH_RADIUS = 5.0f;
 	public static final float WIFIDIRECT_RADIUS = 30.0f;
 
+	public static final int SEC_IN_MIN = 60;
+	
 	// TODO future work
 	public static final int MAX_PEERS_BT = 7;
 	public static final int MAX_PEERS_WD = 254;
@@ -595,8 +597,9 @@ public abstract class FestivalMobility {
     	    while (it.hasNext()) {
     	    	Host host = it.next();
     	    	host.wifiDTime--;
+    	    	System.out.println(host.id + " " + host.wifiDTime);
     			if (host.wifiDTime == 0) {
-    				host.wifiDTime = Node.MILLIS_IN_1MIN;
+    				host.wifiDTime = SEC_IN_MIN;
     				isConnected[ap.id][host.id] = false;
     				host.lastAP = ap.id;
     				host.currentAP = -1;
@@ -622,7 +625,7 @@ public abstract class FestivalMobility {
                 	   	isConnected[ap.id][i] = true;
                        	startContact(ap.id, i, simTime, WIFI_CONTACT);
                        	hosts[i].currentAP = ap.id;
-   						hosts[i].wifiDTime = Node.MILLIS_IN_1MIN;
+   						hosts[i].wifiDTime = SEC_IN_MIN;
    						ap.clients.add(hosts[i]);
                        	newContacts--;
                        	contacts++;
@@ -632,7 +635,7 @@ public abstract class FestivalMobility {
     					if (simTime != 0) {
     						// if the hosts has been previously connected, then they must be disconnected
                             isConnected[ap.id][i] = false;
-                            hosts[i].wifiDTime = Node.MILLIS_IN_1MIN;
+                            hosts[i].wifiDTime = SEC_IN_MIN;
                             hosts[i].currentAP = -1;
             				hosts[i].lastAP = ap.id;
                             endContact(ap.id, i, simTime, csvWriter);

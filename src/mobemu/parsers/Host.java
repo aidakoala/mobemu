@@ -48,7 +48,7 @@ public class Host {
     	// wifi direct trace
     	this.lastAP = -1;
     	this.currentAP = -1;
-    	this.wifiDTime = Node.MILLIS_IN_1MIN;
+    	this.wifiDTime = FestivalMobility.SEC_IN_MIN;
     	
 //    	switch (protocol) {
 //    	case FestivalMobility.BLUETOOTH:
@@ -64,6 +64,6 @@ public class Host {
     
     public void resetWifiParams() {
     	this.currentAP = -1;
-    	this.wifiDTime = Node.MILLIS_IN_1MIN;
+    	this.wifiDTime = FestivalMobility.SEC_IN_MIN;
     }
 }

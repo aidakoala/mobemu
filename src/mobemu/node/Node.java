@@ -76,7 +76,6 @@ public abstract class Node {
     protected static final int MILLIS_IN_DAY = 1000 * 60 * 60 * 24; // total number of milliseconds in a day
     protected static final int MILLIS_IN_HOUR = 1000 * 60 * 60;
     protected static final int MILLIS_IN_6MIN = 1000 * 60 * 6;
-    public static final int MILLIS_IN_1MIN = 1000 * 60;
     public static final int MILLIS_IN_5MIN = 1000 * 60 * 5;
     public static final int MILLIS_IN_10MIN = 1000 * 60 * 10;
     public static final int MILLIS_IN_15MIN = 1000 * 60 * 15;
