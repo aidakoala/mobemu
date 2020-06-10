@@ -700,6 +700,7 @@ public abstract class FestivalMobility {
 		placeGroupsOnGrid(rand);
 		
         for (simTime = 0.0; simTime < totalSimulationTime; simTime += stepInterval) {
+        	System.out.println("SIMULATION TIME " + simTime);
         	if (showRun) {
         		component.repaint();
 				text.setText(generateStatsString(simTime, contacts));
