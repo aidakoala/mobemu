@@ -55,13 +55,14 @@ public class MySprayAndWait extends Node {
     }
 
     @Override
-    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
         if (!(encounteredNode instanceof MySprayAndWait)) {
             return;
         }
 
         MySprayAndWait sprayAndWaitEncounteredNode = (MySprayAndWait) encounteredNode;
-        int remainingMessages = deliverDirectMessages(sprayAndWaitEncounteredNode, altruismAnalysis, contactDuration, currentTime, dissemination);
+        int remainingMessages = deliverDirectMessages(sprayAndWaitEncounteredNode, altruismAnalysis, 
+        		contactDuration, currentTime, dissemination, contactType);
         int totalMessages = 0;
         List<Message> toRemove = new ArrayList<>();
 
@@ -188,4 +189,10 @@ public class MySprayAndWait extends Node {
 
         return true;
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -180,4 +180,10 @@ public class SENSE extends Node {
 
         return perceivedAltruism;
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
+		// TODO Auto-generated method stub
+		
+	}
 }

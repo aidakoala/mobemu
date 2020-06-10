@@ -21,6 +21,7 @@ public class Contact implements Comparable<Contact> {
     private long start;
 	@Parsed(index = 3)
     private long end;
+	@Parsed(index = 4)
     private boolean type; // true - WiFi, false - Bluetooth
     
     public Contact() {

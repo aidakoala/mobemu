@@ -86,13 +86,14 @@ public class SprayAndFocus extends Node {
     }
 
     @Override
-    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
         if (!(encounteredNode instanceof SprayAndFocus)) {
             return;
         }
 
         SprayAndFocus sprayAndFocusEncounteredNode = (SprayAndFocus) encounteredNode;
-        int remainingMessages = deliverDirectMessages(sprayAndFocusEncounteredNode, altruismAnalysis, contactDuration, currentTime, false);
+        int remainingMessages = deliverDirectMessages(sprayAndFocusEncounteredNode, altruismAnalysis, 
+        		contactDuration, currentTime, false, contactType);
         int totalMessages = 0;
         List<Message> toRemove = new ArrayList<>();
 
@@ -184,4 +185,10 @@ public class SprayAndFocus extends Node {
 
         return true;
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }

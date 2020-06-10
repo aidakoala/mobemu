@@ -171,7 +171,7 @@ public class AdaptiveRouting extends Node {
     }
 
     @Override
-    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
         if (!(encounteredNode instanceof AdaptiveRouting)) {
             return;
         }
@@ -182,7 +182,7 @@ public class AdaptiveRouting extends Node {
         updateContactData(this, encNode, contactDuration, currentTime);
         updateContactData(encNode, this, contactDuration, currentTime);
 
-        int remainingMessages = deliverDirectMessages(encNode, false, contactDuration, currentTime, false);
+        int remainingMessages = deliverDirectMessages(encNode, false, contactDuration, currentTime, false, contactType);
         int totalMessages = 0;
 
         // download from the encountered node's memory all messages
@@ -606,4 +606,10 @@ public class AdaptiveRouting extends Node {
             this(0);
         }
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }

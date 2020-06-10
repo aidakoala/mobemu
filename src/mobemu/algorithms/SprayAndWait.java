@@ -59,13 +59,14 @@ public class SprayAndWait extends Node {
     }
 
     @Override
-    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
         if (!(encounteredNode instanceof SprayAndWait)) {
             return;
         }
 
         SprayAndWait sprayAndWaitEncounteredNode = (SprayAndWait) encounteredNode;
-        int remainingMessages = deliverDirectMessages(sprayAndWaitEncounteredNode, altruismAnalysis, contactDuration, currentTime, dissemination);
+        int remainingMessages = deliverDirectMessages(sprayAndWaitEncounteredNode, altruismAnalysis, 
+        		contactDuration, currentTime, dissemination, contactType);
         int totalMessages = 0;
 
         // download each message in the encountered node's data memory that is not in the current node's memory
@@ -127,4 +128,10 @@ public class SprayAndWait extends Node {
     public enum Type {
         SOURCE, BINARY
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }

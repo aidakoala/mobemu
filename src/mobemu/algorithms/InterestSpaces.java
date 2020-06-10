@@ -248,7 +248,7 @@ public class InterestSpaces extends Node {
     }
 
     @Override
-    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
         if (!(encounteredNode instanceof InterestSpaces)) {
             return;
         }
@@ -643,7 +643,8 @@ public class InterestSpaces extends Node {
 
         @Override
         public void exchangeData(InterestSpaces encounteredNode, long contactDuration, long currentTime) {
-            int remainingMessages = deliverDirectMessages(encounteredNode, altruismAnalysis, contactDuration, currentTime, true);
+            int remainingMessages = deliverDirectMessages(encounteredNode, altruismAnalysis, 
+            		contactDuration, currentTime, true);
             int totalMessages = 0;
 
             for (Message message : encounteredNode.dataMemory) {
@@ -1035,4 +1036,10 @@ public class InterestSpaces extends Node {
         public void preExchangeData(InterestSpaces encounteredNode, long currentTime) {
         }
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }

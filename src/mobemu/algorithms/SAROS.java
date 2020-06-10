@@ -525,4 +525,10 @@ public class SAROS extends Node {
 
         return trust / normalizer;
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
+		// TODO Auto-generated method stub
+		
+	}
 }

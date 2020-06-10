@@ -149,4 +149,10 @@ public class MoghadamSchulzrinne extends Node {
 
         return total == 0.0 || perceivedAltruism >= Altruism.getTrustThreshold();
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
+		// TODO Auto-generated method stub
+		
+	}
 }

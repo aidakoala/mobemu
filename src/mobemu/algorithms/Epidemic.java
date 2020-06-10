@@ -56,13 +56,14 @@ public class Epidemic extends Node {
     }
 
     @Override
-    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
         if (!(encounteredNode instanceof Epidemic)) {
             return;
         }
 
         Epidemic epidemicEncounteredNode = (Epidemic) encounteredNode;
-        int remainingMessages = deliverDirectMessages(epidemicEncounteredNode, altruismAnalysis, contactDuration, currentTime, dissemination);
+        int remainingMessages = deliverDirectMessages(epidemicEncounteredNode, altruismAnalysis,
+        		contactDuration, currentTime, dissemination, contactType);
         int totalMessages = 0;
 
         // download each message in the encountered node's data memory that is not in the current node's memory
@@ -87,4 +88,10 @@ public class Epidemic extends Node {
             }
         }
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }

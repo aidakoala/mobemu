@@ -44,13 +44,14 @@ public class BubbleRap extends Node {
     }
 
     @Override
-    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+    protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
         if (!(encounteredNode instanceof BubbleRap)) {
             return;
         }
 
         BubbleRap bubbleRapEncounteredNode = (BubbleRap) encounteredNode;
-        int remainingMessages = deliverDirectMessages(bubbleRapEncounteredNode, false, contactDuration, currentTime, false);
+        int remainingMessages = deliverDirectMessages(bubbleRapEncounteredNode, false, contactDuration,
+        		currentTime, false, contactType);
         int totalMessages = 0;
 
         for (Message message : bubbleRapEncounteredNode.dataMemory) {
@@ -93,4 +94,10 @@ public class BubbleRap extends Node {
             }
         }
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }

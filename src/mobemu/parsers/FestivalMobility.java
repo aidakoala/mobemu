@@ -96,7 +96,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			 fos = new FileOutputStream(contactsFile);
 			 outStream = new DataOutputStream(new BufferedOutputStream(fos));
 			 csvWriter = new CsvWriter(outStream, settings);
-			 csvWriter.writeHeaders("id1", "id2", "tstart","tend");
+			 csvWriter.writeHeaders("id1", "id2", "tstart","tend","type");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -167,7 +167,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			FileOutputStream fos = new FileOutputStream(fileName);
 			DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
 			CsvWriter csvWriter = new CsvWriter(outStream, settings);
-			csvWriter.writeHeaders("id1", "id2", "tstart","tend");
+			csvWriter.writeHeaders("id1", "id2", "tstart", "tend", "type");
 				
 		    csvWriter.processRecords(this.trace.chatPairs);
 
@@ -202,10 +202,10 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	}
 	
 	@Override
-	protected void startContact(int nodeA, int nodeB, double tick) {
+	protected void startContact(int nodeA, int nodeB, double tick, boolean type) {
 		tick *= MILLIS_PER_SECOND;
 
-		contactsInProgress.add(new Contact(nodeA, nodeB, (long) tick, (long) tick));
+		contactsInProgress.add(new Contact(nodeA, nodeB, (long) tick, (long) tick, type));
 
 		if ((long) tick < start) {
 			start = (long) tick;

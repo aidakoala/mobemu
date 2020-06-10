@@ -30,6 +30,9 @@ public abstract class FestivalMobility {
 	public static final int MAX_PEERS_BT = 7;
 	public static final int MAX_PEERS_WD = 254;
 	
+	public static final boolean WIFI_CONTACT = true;
+	public static final boolean BLUETOOTH_CONTACT = false;
+	
 	// types of movement
 	// assuming the shows start on the hour, the communities will be able
 	// to move between grids/stages when this feature will be implemented
@@ -113,7 +116,7 @@ public abstract class FestivalMobility {
 	JTextArea text = null;
 	FestivalMobilityComponent component = null;
     
-    protected abstract void startContact(int nodeA, int nodeB, double tick);
+    protected abstract void startContact(int nodeA, int nodeB, double tick, boolean type);
     protected abstract void endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter);
     protected abstract void generateInteractionMatrix();
     protected abstract void computeCommonFriends();
@@ -551,7 +554,7 @@ public abstract class FestivalMobility {
     }
     
     public void generateContactsWifiDirect(WifiDirectGO ap, CsvWriter csvWriter) {
-    	float radius = FestivalMobility.BLUETOOTH_RADIUS;
+    	float radius = FestivalMobility.WIFIDIRECT_RADIUS;
     	
 //    	if (ap.isBreakTime) {
 //    		ap.breakTime--;
@@ -617,7 +620,7 @@ public abstract class FestivalMobility {
     				// from this access point, then they must be connected
                    if ((!isConnected[ap.id][i]) && (hosts[i].lastAP != ap.id)) {
                 	   	isConnected[ap.id][i] = true;
-                       	startContact(ap.id, i, simTime);
+                       	startContact(ap.id, i, simTime, WIFI_CONTACT);
                        	hosts[i].currentAP = ap.id;
    						hosts[i].wifiDTime = Node.MILLIS_IN_1MIN;
    						ap.clients.add(hosts[i]);
@@ -663,7 +666,7 @@ public abstract class FestivalMobility {
     			        // if the hosts has been previously disconnected, then they must be connected
                         if (!isConnected[i][j]) {
                             isConnected[i][j] = true;
-                            startContact(i, j, simTime);
+                            startContact(i, j, simTime, BLUETOOTH_CONTACT);
                             contacts++;
                         }
     				} else {

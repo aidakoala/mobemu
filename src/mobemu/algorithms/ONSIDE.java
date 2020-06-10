@@ -452,4 +452,10 @@ public class ONSIDE extends Node {
             }
         }
     }
+
+	@Override
+	protected void onDataExchange(Node encounteredNode, long contactDuration, long currentTime, boolean contactType) {
+		// TODO Auto-generated method stub
+		
+	}
 }
