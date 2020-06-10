@@ -652,7 +652,6 @@ public abstract class FestivalMobility {
  
     	for (int i = 0; i < noHosts; i++) {
     		if (wifiDirectAPs.get(i) != null) {
-    			generateContactsWifiDirect(wifiDirectAPs.get(i), csvWriter);
     			continue;
     		}
     		
@@ -738,7 +737,11 @@ public abstract class FestivalMobility {
         			}
         		}
         	}
-        	generateContacts(csvWriter);        	
+        	generateContacts(csvWriter);
+        	// generate WifiDirect contacts
+        	for (WifiDirectGO ap : wifiDirectAPs.values()) {
+        		generateContactsWifiDirect(ap, csvWriter);
+        	}
         }
         // finish the simulation
         for (int i = 0; i < noHosts; i++) {
