@@ -213,7 +213,9 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 	}
 	
 	@Override
-	protected void endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter) {
+	protected boolean endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter) {
+		boolean res = false;
+		
 		tick *= MILLIS_PER_SECOND;
 		Contact contact = null;
 
@@ -225,7 +227,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		}
 
 		if (contact == null) {
-			return;
+			return res;
 		}
 
 		contactsInProgress.remove(contact);
@@ -235,8 +237,11 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 			end = (long) tick;
 		}
 
+		res = contact.getType();
 		csvWriter.processRecord(contact);
 		trace.addContact(contact);
+		
+		return res;
 	}
 	
 	/*

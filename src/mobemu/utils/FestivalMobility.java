@@ -27,6 +27,7 @@ public abstract class FestivalMobility {
 	public static final float WIFIDIRECT_RADIUS = 30.0f;
 
 	public static final int SEC_IN_MIN = 60;
+	public static final int SEC_IN_5MIN = 5 * 60;
 	
 	// TODO future work
 	public static final int MAX_PEERS_BT = 7;
@@ -119,7 +120,7 @@ public abstract class FestivalMobility {
 	FestivalMobilityComponent component = null;
     
     protected abstract void startContact(int nodeA, int nodeB, double tick, boolean type);
-    protected abstract void endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter);
+    protected abstract boolean endContact(int nodeA, int nodeB, double tick, CsvWriter csvWriter);
     protected abstract void generateInteractionMatrix();
     protected abstract void computeCommonFriends();
     
@@ -474,17 +475,19 @@ public abstract class FestivalMobility {
     		host2.goalCurrentY = host1.currentY - 0.5;
     }
     
-    public void disconnectAPClients(int id) {
+    public void disconnectAPClients(int id, CsvWriter csvWriter) {
     	WifiDirectGO wifiDirectAP = this.wifiDirectAPs.get(id);
     	
     	for (Host host :  wifiDirectAP.clients) {
+			isConnected[id][host.id] = false;
+            endContact(id, host.id, simTime, csvWriter);
     		host.resetWifiParams();
     	}
     	
     	wifiDirectAP.clients.clear();
     }
     
-    public void moveHosts(long simTime) {
+    public void moveHosts(long simTime, CsvWriter csvWriter) {
     	int peerId;
     	
     	for (int i = 0; i < noHosts; i++) {
@@ -516,7 +519,7 @@ public abstract class FestivalMobility {
         			eligibleGroup[hosts[i].groupId] = true;
         			
         			// once the node is reunited with its community it stops being an AP
-        			disconnectAPClients(i);
+        			disconnectAPClients(i, csvWriter);
         			this.wifiDirectAPs.remove(i);
         			hosts[i].protocol = BLUETOOTH;
 
@@ -558,46 +561,49 @@ public abstract class FestivalMobility {
     public void generateContactsWifiDirect(WifiDirectGO ap, CsvWriter csvWriter) {
     	float radius = FestivalMobility.WIFIDIRECT_RADIUS;
     	
-//    	if (ap.isBreakTime) {
-//    		ap.breakTime--;
-//    		// if the break is over
-//    		if (ap.breakTime == 0) {
-//    			ap.resetTimers();
-//    			
-//    			for (int i = 0; i < noHosts; i++) {
-//    				if (i == ap.id)
-//    					continue;
-//    				// a host can be connected to only one access point in legacy mode
-//    				if (hosts[i].currentAP != -1)
-//    					continue;
-//    				
-//    				double currentDist = getDistance(hosts[ap.id], hosts[i]);
-//    				if (currentDist < radius) {
-//    					isConnected[ap.id][i] = true;
-//                            
-//    					hosts[i].currentAP = ap.id;
-//    					hosts[i].wifiDTime = Node.MILLIS_IN_1MIN;
-//                        ap.clients.add(hosts[i]);
-//                            
-//                        startContact(ap.id, i, simTime);
-//                        contacts++;
-//                     }
-//    			}
-//    		}
-//    	} else {
-//    		ap.groupTimeout--;
-//    		if (ap.groupTimeout == 0) {
-//    			disconnectAPClients(ap.id);
-//    			ap.isBreakTime = true;
-//    			return;
-//    		}
+    	if (ap.isBreakTime) {
+    		ap.breakTime--;
+    		// if the break is over
+    		if (ap.breakTime == 0) {
+    			ap.resetTimers();
+//    			hosts[ap.id].protocol = -1;
+    			
+    			for (int i = 0; i < noHosts; i++) {
+    				if (i == ap.id)
+    					continue;
+    				// a host can be connected to only one access point in legacy mode
+    				if (hosts[i].currentAP != -1)
+    					continue;
+    				
+    				double currentDist = getDistance(hosts[ap.id], hosts[i]);
+    				if (currentDist < radius) {
+    					isConnected[ap.id][i] = true;
+                            
+    					hosts[i].currentAP = ap.id;
+    					hosts[i].wifiDTime = SEC_IN_MIN;
+                        ap.clients.add(hosts[i]);
+                            
+                        startContact(ap.id, i, simTime, WIFI_CONTACT);
+                        contacts++;
+                     }
+    			}
+    		}
+    	} else {
+    		ap.groupTimeout--;
+    		if (ap.groupTimeout == 0) {
+    			disconnectAPClients(ap.id, csvWriter);
+    			ap.isBreakTime = true;
+    			// switch to bluetooth and accept contact while WiFi Direct is off
+//    			hosts[ap.id].protocol = BLUETOOTH;
+    			return;
+    		}
     		
     		// see what hosts should be disconnected
     		Iterator<Host> it = ap.clients.iterator();
     	    while (it.hasNext()) {
     	    	Host host = it.next();
     	    	host.wifiDTime--;
-    	    	System.out.println(host.id + " " + host.wifiDTime);
+    	    	// System.out.println(host.id + " " + host.wifiDTime);
     			if (host.wifiDTime == 0) {
     				host.wifiDTime = SEC_IN_MIN;
     				isConnected[ap.id][host.id] = false;
@@ -635,19 +641,19 @@ public abstract class FestivalMobility {
     					if (simTime != 0) {
     						// if the hosts has been previously connected, then they must be disconnected
                             isConnected[ap.id][i] = false;
-                            hosts[i].wifiDTime = SEC_IN_MIN;
-                            hosts[i].currentAP = -1;
-            				hosts[i].lastAP = ap.id;
-                            endContact(ap.id, i, simTime, csvWriter);
-                            // remove from client list
-                            System.out.println("list size = " + ap.clients.size());
-                            ap.clients.remove(hosts[i]);
-                            System.out.println("list size = " + ap.clients.size());
-                        }
+                            boolean contactType = endContact(ap.id, i, simTime, csvWriter);
+                            if (contactType == WIFI_CONTACT) {
+                            	hosts[i].wifiDTime = SEC_IN_MIN;
+                                hosts[i].currentAP = -1;
+                   				hosts[i].lastAP = ap.id;
+                   				ap.clients.remove(hosts[i]);
+                   				System.out.println("contact type " + contactType);
+                            }
+    					}
     			}
     		}
-    	    System.out.println("AP " + ap.id + " new contacts " + newContacts);
-//    	}	
+    	    // System.out.println("AP " + ap.id + " new contacts " + newContacts + " list " + ap.clients.size());
+    	}	
     }
     
     public void generateContacts(CsvWriter csvWriter) {
@@ -703,7 +709,7 @@ public abstract class FestivalMobility {
 		placeGroupsOnGrid(rand);
 		
         for (simTime = 0.0; simTime < totalSimulationTime; simTime += stepInterval) {
-        	System.out.println("SIMULATION TIME " + simTime);
+        	// System.out.println("SIMULATION TIME " + simTime);
         	if (showRun) {
         		component.repaint();
 				text.setText(generateStatsString(simTime, contacts));
@@ -719,7 +725,7 @@ public abstract class FestivalMobility {
         	// moveTravelers(rand);
         	
         	// compute next goal for hosts
-        	moveHosts((long)simTime);
+        	moveHosts((long)simTime, csvWriter);
         	// according to Zurich festival paper, 20% of the nodes are on the move at any given time
         	// our target is to move 5% of the nodes at any time, given the simulation size
         	int target = (int) (noHosts * 0.05);
