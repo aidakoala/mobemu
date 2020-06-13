@@ -34,16 +34,16 @@ class TraceTime {
 public class MobEmu {
 
 	public static void main(String[] args) {
-		float gridHeight = 30f;
-		float gridWidth = 20f;
-		int rows = 6;
-		int cols = 5;
+		float gridHeight = 60f;
+		float gridWidth = 50f;
+		int rows = 15;
+		int cols = 10;
 		boolean showRun = false;
 		int groupSize = 5;
 		long startTime = System.nanoTime();
 		// message average size 100kB, buffer capacity 500MB
 		int dataMemory = 5000;
-		String dirName = "wifid-254-breaks";
+		String dirName = "wifid-60x50";
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
 		// dimensiunea spatiului de simulare de 200 pe 200 m,

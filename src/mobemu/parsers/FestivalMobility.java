@@ -48,6 +48,7 @@ public class FestivalMobility extends mobemu.utils.FestivalMobility implements P
 		this.trace = new Trace("FestivalMobility");
 		this.contactsInProgress = new ArrayList<>();
 		this.noHosts = computeNoHostFestival(gridHeight, gridWidth, rows, columns);
+		System.out.println("No of hosts " + this.noHosts);
 		
 		this.commonFriends = new int[noHosts][noHosts];
 		
