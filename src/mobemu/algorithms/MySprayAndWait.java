@@ -20,7 +20,7 @@ public class MySprayAndWait extends Node {
      * Default delta value.
      */
     private static final long DEFAULT_DELTA = 1000;
-    private static final double CENTRALITY_THRESHOLD = 50;
+    private static final double CENTRALITY_THRESHOLD = 100;
     private static final int COMMON_FRIENDS_THRESHOLD = 30;
 
     /**
