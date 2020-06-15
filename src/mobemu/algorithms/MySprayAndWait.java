@@ -166,7 +166,7 @@ public class MySprayAndWait extends Node {
     			this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
         		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
         		message.setCopies(id, message.getCopies(encounteredId));
-        	} else if (centralityDiff < CENTRALITY_THRESHOLD || commonFriendsDiff < COMMON_FRIENDS_THRESHOLD) {
+        	} else if (centralityDiff < CENTRALITY_THRESHOLD) {
         		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
         		message.setCopies(id, message.getCopies(encounteredId));
         	} else {
