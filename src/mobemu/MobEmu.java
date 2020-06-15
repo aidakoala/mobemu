@@ -4,6 +4,9 @@
  */
 package mobemu;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 
 import mobemu.algorithms.BubbleRap;
@@ -34,16 +37,16 @@ class TraceTime {
 public class MobEmu {
 
 	public static void main(String[] args) {
-		float gridHeight = 60f;
-		float gridWidth = 50f;
-		int rows = 15;
-		int cols = 10;
+		float gridHeight = 40f;
+		float gridWidth = 40f;
+		int rows = 10;
+		int cols = 8;
 		boolean showRun = false;
 		int groupSize = 5;
 		long startTime = System.nanoTime();
 		// message average size 100kB, buffer capacity 500MB
 		int dataMemory = 5000;
-		String dirName = "wifid-60x50";
+		String dirName = "wifid-254-breaks";
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
 		// dimensiunea spatiului de simulare de 200 pe 200 m,
@@ -58,8 +61,8 @@ public class MobEmu {
 		// neaparat sa depinda una de alta), viteza nodurilor traveler este de 1 m/s;
 		// daca vrei sa vezi si o reprezentare vizuala a simularii, pune booleanul
 		// showRun (declarat mai sus) pe true
-		FestivalMobility parser = new FestivalMobility(3600, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
-				gridWidth, cols, 1.0f, groupSize, showRun, 10, 0, dirName);
+//		FestivalMobility parser = new FestivalMobility(1800, 0.5f, 1f, 5.0f, 30.0f, 1.0f, gridHeight, rows,
+//				gridWidth, cols, 1.0f, groupSize, showRun, 10, 0, dirName);
 //		 Parser parser = new HCMM(2 * 3600, 300, 0f, 0f, 0.1f, gridWidth, gridHeight, 10, 4, 10.0, 0.7,
 //		 		 0.5f, 0.8f, 0, showRun, 10, false);
 		// Parser parser = new SonarFestival();
@@ -100,7 +103,7 @@ public class MobEmu {
 //		System.out.println("start = " + start / Parser.MILLIS_PER_SECOND);
 //		System.out.println("end = " + end / Parser.MILLIS_PER_SECOND);
 		
-//		Parser parser = new FMM(dirName);
+		Parser parser = new FMM(dirName);
 		
 		long estimatedTime = System.nanoTime() - startTime;
 		startTime = System.nanoTime();
@@ -150,7 +153,7 @@ public class MobEmu {
 		System.out.println("Run simulation");
 		List<Message> messages = Node.runTrace(nodes, parser.getTraceData(), true, dissemination, seed);
 		estimatedTime = System.nanoTime() - startTime;
-		
+				
 		System.out.println("Trace run duration: " + estimatedTime * 1e-9);
 		System.out.println("Messages: " + messages.size());
 

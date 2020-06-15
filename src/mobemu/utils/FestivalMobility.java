@@ -519,9 +519,9 @@ public abstract class FestivalMobility {
         			eligibleGroup[hosts[i].groupId] = true;
         			
         			// once the node is reunited with its community it stops being an AP
-        			disconnectAPClients(i, csvWriter);
-        			this.wifiDirectAPs.remove(i);
-        			hosts[i].protocol = BLUETOOTH;
+//        			disconnectAPClients(i, csvWriter);
+//        			this.wifiDirectAPs.remove(i);
+//        			hosts[i].protocol = BLUETOOTH;
 
     			} else if (hosts[i].movementType == MOVE_GROUP) {
     				int groupId = hosts[i].groupId;
@@ -749,9 +749,9 @@ public abstract class FestivalMobility {
         	}
         	generateContacts(csvWriter);
         	// generate WifiDirect contacts
-        	for (WifiDirectGO ap : wifiDirectAPs.values()) {
-        		generateContactsWifiDirect(ap, csvWriter);
-        	}
+//        	for (WifiDirectGO ap : wifiDirectAPs.values()) {
+//        		generateContactsWifiDirect(ap, csvWriter);
+//        	}
         }
         // finish the simulation
         for (int i = 0; i < noHosts; i++) {
@@ -783,9 +783,9 @@ public abstract class FestivalMobility {
 		}
 		
 		// the node will use WiFi Direct
-		this.wifiDirectAPs.put(id, new WifiDirectGO(id));
+		// this.wifiDirectAPs.put(id, new WifiDirectGO(id));
 		// the other nodes will not consider this node for bluetooth contacts
-		hosts[id].protocol = -1;
+		// hosts[id].protocol = -1;
 		
 		// generate coords in that cell
 		computeGoalCoords(id, hosts, rand);

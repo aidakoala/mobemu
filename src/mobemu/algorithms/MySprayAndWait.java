@@ -20,6 +20,8 @@ public class MySprayAndWait extends Node {
      * Default delta value.
      */
     private static final long DEFAULT_DELTA = 1000;
+    private static final double CENTRALITY_THRESHOLD = 50;
+    private static final int COMMON_FRIENDS_THRESHOLD = 30;
 
     /**
      * Instantiates a {@code SprayAndWait} object.
@@ -145,9 +147,26 @@ public class MySprayAndWait extends Node {
 //        	}
         	
         	// SW 4 || 5
+//        	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
+//        		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
+//        		this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+//        		message.setCopies(id, message.getCopies(encounteredId));
+//        	} else {
+//        		message.setCopies(encounteredId, message.getCopies(encounteredId) - 1);
+//        		message.setCopies(id, 1);
+//        	}
+        	
+        	double centralityDiff = Math.abs(this.centrality.getValue(Centrality.CentralityValue.CURRENT) -
+        			encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT));
+        	int commonFriendsDiff = Math.abs(this.commonFriends[dest] - encounteredNode.commonFriends[dest]);
+        	
         	if (this.centrality.getValue(Centrality.CentralityValue.CURRENT) >
-        		encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
-        		this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+    			encounteredNode.centrality.getValue(Centrality.CentralityValue.CURRENT) ||
+    			this.commonFriends[dest] > encounteredNode.commonFriends[dest]) {
+        		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
+        		message.setCopies(id, message.getCopies(encounteredId));
+        	} else if (centralityDiff < CENTRALITY_THRESHOLD || commonFriendsDiff < COMMON_FRIENDS_THRESHOLD) {
         		message.setCopies(encounteredId, message.getCopies(encounteredId) / 2);
         		message.setCopies(id, message.getCopies(encounteredId));
         	} else {

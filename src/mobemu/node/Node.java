@@ -141,8 +141,8 @@ public abstract class Node {
 
         this.encounteredNodes = new HashMap<>();
         // TODO init this memmory hungry structure only for algorithms who use it
-        this.encountersPerHour = new int[HOURS_IN_DAY][(int) ((double) (traceEndReset - traceStartReset) / MILLIS_IN_DAY) + 1][nodes];
-        this.timesPerHour = new long[HOURS_IN_DAY][(int) ((double) (traceEndReset - traceStartReset) / MILLIS_IN_DAY) + 1][nodes];
+        //  this.encountersPerHour = new int[HOURS_IN_DAY][(int) ((double) (traceEndReset - traceStartReset) / MILLIS_IN_DAY) + 1][nodes];
+        // this.timesPerHour = new long[HOURS_IN_DAY][(int) ((double) (traceEndReset - traceStartReset) / MILLIS_IN_DAY) + 1][nodes];
         this.exchangeStats = new HashMap<>();
         this.battery = new Battery(batteryRandom.nextDouble() * 24.0 * 3600.0, 24.0 * 3600.0, 3600, 0.2);
         this.messagesDelivered = 0;
@@ -475,12 +475,12 @@ public abstract class Node {
     public void run(Node encounteredNode, long tick, long contactDuration, boolean newContact,
     		long timeDelta, long sampleTime, boolean contactType) {
         // update community information
-        community.onUpdate(encounteredNode, encounteredNodes);
+        // community.onUpdate(encounteredNode, encounteredNodes);
 
         updateContactDuration(encounteredNode.id, sampleTime, tick);
         updateCentrality(timeDelta);
         // Not used in Epidemic
-        updateTimes(encounteredNode.id, tick);
+        // updateTimes(encounteredNode.id, tick);
 
         // do these steps only if the contact just began
         if (newContact) {
@@ -488,10 +488,10 @@ public abstract class Node {
             updateContactsNumber(encounteredNode.id, tick);
 
             // update the number of encounters per hour
-            updateEncounters(encounteredNode.id, tick);
+            // updateEncounters(encounteredNode.id, tick);
 
             // update community information
-            community.onContact(encounteredNode, tick, sampleTime);
+            // community.onContact(encounteredNode, tick, sampleTime);
 
             // data routing/dissemination
             exchangeData(encounteredNode, contactDuration, tick, contactType);
@@ -1007,13 +1007,13 @@ public abstract class Node {
             }
         }
 
-        if (inLocalCommunity(encounteredNode.id) && !uniqueLocalNodes.contains(encounteredNode.id)) {
-            uniqueLocalNodes.add(encounteredNode.id);
-
-            localCentrality.increaseValue(Centrality.CentralityValue.CURRENT);
-            if (timeDelta < Centrality.getTimeWindow()) {
-                localCentrality.setValue(Centrality.CentralityValue.CUMULATED, localCentrality.getValue(Centrality.CentralityValue.CURRENT));
-            }
-        }
+//        if (inLocalCommunity(encounteredNode.id) && !uniqueLocalNodes.contains(encounteredNode.id)) {
+//            uniqueLocalNodes.add(encounteredNode.id);
+//
+//            localCentrality.increaseValue(Centrality.CentralityValue.CURRENT);
+//            if (timeDelta < Centrality.getTimeWindow()) {
+//                localCentrality.setValue(Centrality.CentralityValue.CUMULATED, localCentrality.getValue(Centrality.CentralityValue.CURRENT));
+//            }
+//        }
     }
 }
