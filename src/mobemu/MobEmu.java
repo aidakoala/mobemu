@@ -37,16 +37,16 @@ class TraceTime {
 public class MobEmu {
 
 	public static void main(String[] args) {
-		float gridHeight = 40f;
-		float gridWidth = 40f;
-		int rows = 10;
-		int cols = 8;
+		float gridHeight = 20f;
+		float gridWidth = 20f;
+		int rows = 5;
+		int cols = 4;
 		boolean showRun = false;
 		int groupSize = 5;
 		long startTime = System.nanoTime();
 		// message average size 100kB, buffer capacity 500MB
 		int dataMemory = 5000;
-		String dirName = "bluetooth";
+		String dirName = "bluetooth-20x20";
 		// parametrii relevant sunt descrisi in continuare:
 		// 100 de noduri, durata de 5 ore, viteza unui nod intre 0.25 si 1 m/s,
 		// dimensiunea spatiului de simulare de 200 pe 200 m,
@@ -133,18 +133,18 @@ public class MobEmu {
 //			nodes[i] = new Epidemic(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], dataMemory,
 //					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination,
 //					altruism);
-//			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
-//					SprayAndWait.Type.BINARY);
+			nodes[i] = new SprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+					SprayAndWait.Type.BINARY);
 //			nodes[i] = new SprayAndFocus(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), altruism,
 //					Node.MILLIS_IN_15MIN);
 //			nodes[i] = new BubbleRap(i, nodes.length,  parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
 //					100, seed, parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime());
-			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
-					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
-					Node.MILLIS_IN_15MIN);
-			nodes[i].setCommonFriends(parser.getCommonFriends(i));
+//			nodes[i] = new MySprayAndWait(i, nodes.length, parser.getContextData().get(i), parser.getSocialNetwork()[i], 5000,
+//					100, seed,parser.getTraceData().getStartTime(), parser.getTraceData().getEndTime(), dissemination, altruism,
+//					Node.MILLIS_IN_15MIN);
+//			nodes[i].setCommonFriends(parser.getCommonFriends(i));
 		}
 
 		System.out.println("Generated nodes");

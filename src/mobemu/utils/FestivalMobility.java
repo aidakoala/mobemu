@@ -738,10 +738,11 @@ public abstract class FestivalMobility {
         			eligibleGroup[hosts[id].groupId] = false;
         			// decide between moving a node or its entire community
         			int decision = zipfDistribution(rand.nextDouble(), ZIPF_SIZE);
-        			if (target % groupSize != 0)
+        			if (target - groupSize < 0)
         				decision = 2;
         			if (decision > 2) {
         				target = moveGroup(id, rand, target);
+        				System.out.println("Move group");
         			} else {
             			target = moveNode(id, rand, target);
         			}
